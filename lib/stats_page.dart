@@ -3,6 +3,7 @@ import 'package:grade_project/category_icons.dart';
 import 'package:grade_project/masareef_transaction.dart';
 import 'package:grade_project/pie_chart.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class StatsPage extends StatefulWidget {
   final List<MasareefTransaction> transactions;
@@ -18,6 +19,7 @@ class _StatsPageState extends State<StatsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final filteredTransactions = _getFilteredTransactions();
     final spendingData = _getSpendingByCategory(filteredTransactions);
     final totalIncome = filteredTransactions
@@ -27,7 +29,7 @@ class _StatsPageState extends State<StatsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Statistics', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(l10n.statistics, style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         elevation: 0,
       ),
@@ -44,7 +46,7 @@ class _StatsPageState extends State<StatsPage> {
                   _buildSummaryCards(totalIncome, totalExpenses),
                   const SizedBox(height: 24),
                   if (spendingData.isNotEmpty) ...[
-                    const Text('Spending Breakdown', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                    Text(l10n.spendingBreakdown, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 16),
                     _buildPieChartCard(spendingData, totalExpenses),
                     const SizedBox(height: 24),
@@ -114,16 +116,17 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Widget _buildSummaryCards(double totalIncome, double totalExpenses) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Expanded(
           child: _buildSummaryCard(
-              'Income', totalIncome, Colors.green, Icons.arrow_upward),
+              l10n.income, totalIncome, Colors.green, Icons.arrow_upward),
         ),
         const SizedBox(width: 16),
         Expanded(
           child: _buildSummaryCard(
-              'Expense', totalExpenses, Colors.red, Icons.arrow_downward),
+              l10n.expenses, totalExpenses, Colors.red, Icons.arrow_downward),
         ),
       ],
     );
@@ -149,7 +152,7 @@ class _StatsPageState extends State<StatsPage> {
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                NumberFormat.currency(symbol: '\$', decimalDigits: 2).format(amount),
+                NumberFormat.currency(symbol: 'CFA', decimalDigits: 2).format(amount),
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -183,7 +186,7 @@ class _StatsPageState extends State<StatsPage> {
                       children: [
                         Text('Total', style: Theme.of(context).textTheme.bodySmall),
                         Text(
-                          NumberFormat.currency(symbol: '\$', decimalDigits: 0).format(totalExpenses),
+                          NumberFormat.currency(symbol: 'CFA', decimalDigits: 0).format(totalExpenses),
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -228,6 +231,7 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Widget _buildCategoryList(Map<String, double> spendingData, double totalExpenses) {
+    final l10n = AppLocalizations.of(context)!;
     if (spendingData.isEmpty) {
       return SliverFillRemaining(
         child: Center(
@@ -236,8 +240,8 @@ class _StatsPageState extends State<StatsPage> {
             children: [
               const Icon(Icons.pie_chart_outline, size: 80, color: Colors.grey),
               const SizedBox(height: 20),
-              Text('No spending data for this period.', style: Theme.of(context).textTheme.titleLarge),
-              Text('Try selecting a different time range.', style: Theme.of(context).textTheme.bodyMedium)
+              Text(l10n.noSpendingDataForThisPeriod, style: Theme.of(context).textTheme.titleLarge),
+              Text(l10n.trySelectingADifferentTimeRange, style: Theme.of(context).textTheme.bodyMedium)
             ],
           ),
         ),
@@ -251,11 +255,11 @@ class _StatsPageState extends State<StatsPage> {
       delegate: SliverChildBuilderDelegate(
             (context, index) {
           if (index == 0) {
-            return const Padding(
-              padding: EdgeInsets.only(left: 16.0, right: 16, top: 0, bottom: 8),
+            return Padding(
+              padding: const EdgeInsets.only(left: 16.0, right: 16, top: 0, bottom: 8),
               child: Text(
-                'Top Categories',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                l10n.topCategories,
+                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
             );
           }
@@ -311,7 +315,7 @@ class _StatsPageState extends State<StatsPage> {
                   FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      NumberFormat.currency(symbol: '\$').format(entry.value),
+                      NumberFormat.currency(symbol: 'CFA').format(entry.value),
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                   ),

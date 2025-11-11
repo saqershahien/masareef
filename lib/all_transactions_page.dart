@@ -3,6 +3,7 @@ import 'package:grade_project/category_icons.dart';
 import 'package:grade_project/database_helper.dart';
 import 'package:grade_project/masareef_transaction.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AllTransactionsPage extends StatefulWidget {
   const AllTransactionsPage({super.key});
@@ -32,15 +33,15 @@ class _AllTransactionsPageState extends State<AllTransactionsPage> {
 
   DateTime _truncateToDay(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
 
-  String _formatDate(DateTime date) {
+  String _formatDate(BuildContext context, DateTime date) {
     final now = DateTime.now();
     final today = _truncateToDay(now);
     final yesterday = _truncateToDay(now.subtract(const Duration(days: 1)));
 
     if (_truncateToDay(date) == today) {
-      return 'Today';
+      return AppLocalizations.of(context)!.today;
     } else if (_truncateToDay(date) == yesterday) {
-      return 'Yesterday';
+      return AppLocalizations.of(context)!.yesterday;
     } else {
       return DateFormat.yMMMd().format(date);
     }
@@ -58,9 +59,10 @@ class _AllTransactionsPageState extends State<AllTransactionsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('All Transactions'),
+        title: Text(l10n.allTransactions),
         elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
@@ -73,7 +75,7 @@ class _AllTransactionsPageState extends State<AllTransactionsPage> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: \${snapshot.error}'));
           } else if (_allTransactions.isEmpty) {
-            return const Center(child: Text('No transactions yet.'));
+            return Center(child: Text(l10n.noTransactionsYet));
           }
 
           final groupedTransactions =
@@ -83,7 +85,7 @@ class _AllTransactionsPageState extends State<AllTransactionsPage> {
 
           return CustomScrollView(
             slivers: sortedDates.expand((date) {
-              final formattedDate = _formatDate(date);
+              final formattedDate = _formatDate(context, date);
               final transactionsForDate = groupedTransactions[date]!;
               double dailyTotal = transactionsForDate.fold(0.0, (sum, item) {
                 return sum + (item.type == 'income' ? item.amount : -item.amount);

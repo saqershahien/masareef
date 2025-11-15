@@ -3,7 +3,7 @@ import 'package:grade_project/category_icons.dart';
 import 'package:grade_project/database_helper.dart';
 import 'package:grade_project/masareef_transaction.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'l10n/app_localizations.dart';
 
 class AllTransactionsPage extends StatefulWidget {
   const AllTransactionsPage({super.key});

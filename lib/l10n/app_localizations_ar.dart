@@ -9,13 +9,13 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
-  String get helloAdam => 'أهلاً آدم';
+  String get helloAdam => 'مرحباً آدم';
 
   @override
-  String get welcomeBack => 'أهلاً بعودتك!';
+  String get welcomeBack => 'مرحباً بعودتك!';
 
   @override
-  String get totalBalance => 'الرصيد الكلي';
+  String get totalBalance => 'الرصيد الإجمالي';
 
   @override
   String get income => 'الدخل';
@@ -42,7 +42,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settings => 'الإعدادات';
 
   @override
-  String get noTransactionsYet => 'لا توجد معاملات حتى الآن.';
+  String get noTransactionsYet => 'لا توجد معاملات بعد.';
 
   @override
   String get addNewTransactionToGetStarted => 'أضف معاملة جديدة للبدء.';
@@ -85,7 +85,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get delete => 'حذف';
 
   @override
-  String get allTransactions => 'كل المعاملات';
+  String get allTransactions => 'جميع المعاملات';
 
   @override
   String get today => 'اليوم';
@@ -100,11 +100,112 @@ class AppLocalizationsAr extends AppLocalizations {
   String get spendingBreakdown => 'تفاصيل الإنفاق';
 
   @override
-  String get topCategories => 'أهم الفئات';
+  String get topCategories => 'أعلى الفئات';
 
   @override
   String get noSpendingDataForThisPeriod => 'لا توجد بيانات إنفاق لهذه الفترة.';
 
   @override
-  String get trySelectingADifferentTimeRange => 'حاول تحديد نطاق زمني مختلف.';
+  String get trySelectingADifferentTimeRange => 'جرّب تحديد نطاق زمني مختلف.';
+
+  @override
+  String get language => 'اللغة';
+
+  @override
+  String get changeTheAppLanguage => 'تغيير لغة التطبيق';
+
+  @override
+  String get selectLanguage => 'اختر اللغة';
+
+  @override
+  String get clearAllData => 'مسح كل البيانات';
+
+  @override
+  String get permanentlyDeleteAllTransactions =>
+      'حذف جميع المعاملات بشكل دائم.';
+
+  @override
+  String get confirmClearData => 'تأكيد مسح البيانات';
+
+  @override
+  String get areYouSureYouWantToDeleteAllTransactionData =>
+      'هل أنت متأكد أنك تريد حذف جميع بيانات المعاملات؟';
+
+  @override
+  String get thisActionCannotBeUndone => 'لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get clearData => 'مسح البيانات';
+
+  @override
+  String get allDataHasBeenCleared => 'تم مسح جميع البيانات.';
+
+  @override
+  String get thisWeek => 'هذا الاسبوع';
+
+  @override
+  String get thisMonth => 'هذا الشهر';
+
+  @override
+  String get total => 'المجموع';
+
+  @override
+  String get categoryGroceries => 'البقالة';
+
+  @override
+  String get categoryRestaurants => 'المطاعم';
+
+  @override
+  String get categoryTransportation => 'المواصلات';
+
+  @override
+  String get categoryUtilities => 'خدمات';
+
+  @override
+  String get categoryRent => 'الإيجار';
+
+  @override
+  String get categoryHealthcare => 'الرعاية الصحية';
+
+  @override
+  String get categoryEntertainment => 'الترفيه';
+
+  @override
+  String get categoryShopping => 'التسوق';
+
+  @override
+  String get categoryEducation => 'التعليم';
+
+  @override
+  String get categoryPersonalCare => 'العناية الشخصية';
+
+  @override
+  String get categoryTravel => 'السفر';
+
+  @override
+  String get categoryGiftsDonations => 'الهدايا والتبرعات';
+
+  @override
+  String get categoryKids => 'الأطفال';
+
+  @override
+  String get categoryPets => 'الحيوانات الأليفة';
+
+  @override
+  String get categoryHome => 'المنزل';
+
+  @override
+  String get categorySalary => 'الراتب';
+
+  @override
+  String get categoryFreelance => 'عمل حر';
+
+  @override
+  String get categoryInvestment => 'استثمار';
+
+  @override
+  String get categoryRentalIncome => 'دخل إيجار';
+
+  @override
+  String get categoryOther => 'أخرى';
 }

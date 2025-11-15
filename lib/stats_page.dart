@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:grade_project/category_icons.dart';
+import 'package:grade_project/category_translations.dart';
 import 'package:grade_project/masareef_transaction.dart';
 import 'package:grade_project/pie_chart.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'l10n/app_localizations.dart';
 
 class StatsPage extends StatefulWidget {
   final List<MasareefTransaction> transactions;
@@ -16,6 +17,12 @@ class StatsPage extends StatefulWidget {
 
 class _StatsPageState extends State<StatsPage> {
   String _selectedPeriod = 'This Week';
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _selectedPeriod = AppLocalizations.of(context)!.thisWeek;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,12 +69,13 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Widget _buildPeriodSelector() {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: SegmentedButton<String>(
-        segments: const [
-          ButtonSegment<String>(value: 'Today', label: Text('Today')),
-          ButtonSegment<String>(value: 'This Week', label: Text('This Week')),
-          ButtonSegment<String>(value: 'This Month', label: Text('This Month')),
+        segments: [
+          ButtonSegment<String>(value: l10n.today, label: Text(l10n.today)),
+          ButtonSegment<String>(value: l10n.thisWeek, label: Text(l10n.thisWeek)),
+          ButtonSegment<String>(value: l10n.thisMonth, label: Text(l10n.thisMonth)),
         ],
         selected: {_selectedPeriod},
         onSelectionChanged: (Set<String> newSelection) {
@@ -81,24 +89,23 @@ class _StatsPageState extends State<StatsPage> {
 
   List<MasareefTransaction> _getFilteredTransactions() {
     final now = DateTime.now();
-    switch (_selectedPeriod) {
-      case 'Today':
-        return widget.transactions
-            .where((tx) =>
-        tx.date.year == now.year &&
-            tx.date.month == now.month &&
-            tx.date.day == now.day)
-            .toList();
-      case 'This Week':
-        final weekAgo = now.subtract(const Duration(days: 7));
-        return widget.transactions.where((tx) => tx.date.isAfter(weekAgo)).toList();
-      case 'This Month':
-        return widget.transactions
-            .where((tx) => tx.date.year == now.year && tx.date.month == now.month)
-            .toList();
-      default:
-        return widget.transactions;
+    final l10n = AppLocalizations.of(context)!;
+    if (_selectedPeriod == l10n.today) {
+      return widget.transactions
+          .where((tx) =>
+              tx.date.year == now.year &&
+              tx.date.month == now.month &&
+              tx.date.day == now.day)
+          .toList();
+    } else if (_selectedPeriod == l10n.thisWeek) {
+      final weekAgo = now.subtract(const Duration(days: 7));
+      return widget.transactions.where((tx) => tx.date.isAfter(weekAgo)).toList();
+    } else if (_selectedPeriod == l10n.thisMonth) {
+      return widget.transactions
+          .where((tx) => tx.date.year == now.year && tx.date.month == now.month)
+          .toList();
     }
+    return widget.transactions;
   }
 
   Map<String, double> _getSpendingByCategory(List<MasareefTransaction> transactions) {
@@ -108,7 +115,7 @@ class _StatsPageState extends State<StatsPage> {
     for (var tx in expenseTransactions) {
       spendingData.update(
         tx.category,
-            (value) => value + tx.amount,
+        (value) => value + tx.amount,
         ifAbsent: () => tx.amount,
       );
     }
@@ -132,7 +139,10 @@ class _StatsPageState extends State<StatsPage> {
     );
   }
 
-  Widget _buildSummaryCard(String title, double amount, Color color, IconData icon) {
+  Widget _buildSummaryCard(
+      String title, double amount, Color color, IconData icon) {
+    final currencyFormat = NumberFormat.currency(
+        locale: Localizations.localeOf(context).toString(), symbol: '');
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -152,7 +162,7 @@ class _StatsPageState extends State<StatsPage> {
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                NumberFormat.currency(symbol: 'CFA', decimalDigits: 2).format(amount),
+                currencyFormat.format(amount),
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -166,7 +176,11 @@ class _StatsPageState extends State<StatsPage> {
     );
   }
 
-  Widget _buildPieChartCard(Map<String, double> spendingData, double totalExpenses) {
+  Widget _buildPieChartCard(
+      Map<String, double> spendingData, double totalExpenses) {
+    final l10n = AppLocalizations.of(context)!;
+    final currencyFormat = NumberFormat.currency(
+        locale: Localizations.localeOf(context).toString(), symbol: '', decimalDigits: 0);
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -184,10 +198,13 @@ class _StatsPageState extends State<StatsPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Total', style: Theme.of(context).textTheme.bodySmall),
+                        Text(l10n.total, style: Theme.of(context).textTheme.bodySmall),
                         Text(
-                          NumberFormat.currency(symbol: 'CFA', decimalDigits: 0).format(totalExpenses),
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                          currencyFormat.format(totalExpenses),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -200,8 +217,10 @@ class _StatsPageState extends State<StatsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: spendingData.entries.map((entry) {
-                  final percentage = totalExpenses > 0 ? (entry.value / totalExpenses) * 100 : 0.0;
-                  final categoryColor = (categoryIcons[entry.key] ?? defaultCategoryInfo).color;
+                  final percentage =
+                      totalExpenses > 0 ? (entry.value / totalExpenses) * 100 : 0.0;
+                  final categoryColor =
+                      (categoryIcons[entry.key] ?? defaultCategoryInfo).color;
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: Row(
@@ -214,7 +233,7 @@ class _StatsPageState extends State<StatsPage> {
                         const SizedBox(width: 8),
                         Flexible(
                           child: Text(
-                            '${entry.key} (${percentage.toStringAsFixed(1)}%)',
+                            '${getCategoryDisplayName(entry.key, context)} (${percentage.toStringAsFixed(1)}%)',
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -230,7 +249,8 @@ class _StatsPageState extends State<StatsPage> {
     );
   }
 
-  Widget _buildCategoryList(Map<String, double> spendingData, double totalExpenses) {
+  Widget _buildCategoryList(
+      Map<String, double> spendingData, double totalExpenses) {
     final l10n = AppLocalizations.of(context)!;
     if (spendingData.isEmpty) {
       return SliverFillRemaining(
@@ -240,8 +260,10 @@ class _StatsPageState extends State<StatsPage> {
             children: [
               const Icon(Icons.pie_chart_outline, size: 80, color: Colors.grey),
               const SizedBox(height: 20),
-              Text(l10n.noSpendingDataForThisPeriod, style: Theme.of(context).textTheme.titleLarge),
-              Text(l10n.trySelectingADifferentTimeRange, style: Theme.of(context).textTheme.bodyMedium)
+              Text(l10n.noSpendingDataForThisPeriod,
+                  style: Theme.of(context).textTheme.titleLarge),
+              Text(l10n.trySelectingADifferentTimeRange,
+                  style: Theme.of(context).textTheme.bodyMedium)
             ],
           ),
         ),
@@ -253,10 +275,11 @@ class _StatsPageState extends State<StatsPage> {
 
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-            (context, index) {
+        (context, index) {
           if (index == 0) {
             return Padding(
-              padding: const EdgeInsets.only(left: 16.0, right: 16, top: 0, bottom: 8),
+              padding:
+                  const EdgeInsets.only(left: 16.0, right: 16, top: 0, bottom: 8),
               child: Text(
                 l10n.topCategories,
                 style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
@@ -271,9 +294,12 @@ class _StatsPageState extends State<StatsPage> {
     );
   }
 
-  Widget _buildCategoryListItem(MapEntry<String, double> entry, double totalExpenses) {
+  Widget _buildCategoryListItem(
+      MapEntry<String, double> entry, double totalExpenses) {
     final percentage = totalExpenses > 0 ? (entry.value / totalExpenses) : 0.0;
     final categoryInfo = categoryIcons[entry.key] ?? defaultCategoryInfo;
+    final currencyFormat = NumberFormat.currency(
+        locale: Localizations.localeOf(context).toString(), symbol: '');
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
@@ -296,14 +322,19 @@ class _StatsPageState extends State<StatsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(entry.key, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    Text(getCategoryDisplayName(entry.key, context),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
                     const SizedBox(height: 8),
-                    LinearProgressIndicator(
-                      value: percentage,
-                      backgroundColor: Colors.grey[300],
-                      valueColor: AlwaysStoppedAnimation<Color>(categoryInfo.color),
-                      minHeight: 6,
+                    ClipRRect(
                       borderRadius: BorderRadius.circular(3),
+                      child: LinearProgressIndicator(
+                        value: percentage,
+                        backgroundColor: Colors.grey[300],
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(categoryInfo.color),
+                        minHeight: 6,
+                      ),
                     ),
                   ],
                 ),
@@ -315,12 +346,14 @@ class _StatsPageState extends State<StatsPage> {
                   FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      NumberFormat.currency(symbol: 'CFA').format(entry.value),
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      currencyFormat.format(entry.value),
+                      style:
+                          const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text('${(percentage * 100).toStringAsFixed(1)}%', style: Theme.of(context).textTheme.bodySmall),
+                  Text('${(percentage * 100).toStringAsFixed(1)}%',
+                      style: Theme.of(context).textTheme.bodySmall),
                 ],
               )
             ],

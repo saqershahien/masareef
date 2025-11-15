@@ -295,6 +295,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try selecting a different time range.'**
   String get trySelectingADifferentTimeRange;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @changeTheAppLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Change the app language'**
+  String get changeTheAppLanguage;
+
+  /// No description provided for @selectLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Language'**
+  String get selectLanguage;
+
+  /// No description provided for @clearAllData.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear All Data'**
+  String get clearAllData;
+
+  /// No description provided for @permanentlyDeleteAllTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete all transactions.'**
+  String get permanentlyDeleteAllTransactions;
+
+  /// No description provided for @confirmClearData.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Clear Data'**
+  String get confirmClearData;
+
+  /// No description provided for @areYouSureYouWantToDeleteAllTransactionData.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete all transaction data?'**
+  String get areYouSureYouWantToDeleteAllTransactionData;
+
+  /// No description provided for @thisActionCannotBeUndone.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone.'**
+  String get thisActionCannotBeUndone;
+
+  /// No description provided for @clearData.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Data'**
+  String get clearData;
+
+  /// No description provided for @allDataHasBeenCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'All data has been cleared.'**
+  String get allDataHasBeenCleared;
+
+  /// No description provided for @thisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This Week'**
+  String get thisWeek;
+
+  /// No description provided for @thisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get thisMonth;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// No description provided for @categoryGroceries.
+  ///
+  /// In en, this message translates to:
+  /// **'Groceries'**
+  String get categoryGroceries;
+
+  /// No description provided for @categoryRestaurants.
+  ///
+  /// In en, this message translates to:
+  /// **'Restaurants'**
+  String get categoryRestaurants;
+
+  /// No description provided for @categoryTransportation.
+  ///
+  /// In en, this message translates to:
+  /// **'Transportation'**
+  String get categoryTransportation;
+
+  /// No description provided for @categoryUtilities.
+  ///
+  /// In en, this message translates to:
+  /// **'Utilities'**
+  String get categoryUtilities;
+
+  /// No description provided for @categoryRent.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent'**
+  String get categoryRent;
+
+  /// No description provided for @categoryHealthcare.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthcare'**
+  String get categoryHealthcare;
+
+  /// No description provided for @categoryEntertainment.
+  ///
+  /// In en, this message translates to:
+  /// **'Entertainment'**
+  String get categoryEntertainment;
+
+  /// No description provided for @categoryShopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping'**
+  String get categoryShopping;
+
+  /// No description provided for @categoryEducation.
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get categoryEducation;
+
+  /// No description provided for @categoryPersonalCare.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Care'**
+  String get categoryPersonalCare;
+
+  /// No description provided for @categoryTravel.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel'**
+  String get categoryTravel;
+
+  /// No description provided for @categoryGiftsDonations.
+  ///
+  /// In en, this message translates to:
+  /// **'Gifts & Donations'**
+  String get categoryGiftsDonations;
+
+  /// No description provided for @categoryKids.
+  ///
+  /// In en, this message translates to:
+  /// **'Kids'**
+  String get categoryKids;
+
+  /// No description provided for @categoryPets.
+  ///
+  /// In en, this message translates to:
+  /// **'Pets'**
+  String get categoryPets;
+
+  /// No description provided for @categoryHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get categoryHome;
+
+  /// No description provided for @categorySalary.
+  ///
+  /// In en, this message translates to:
+  /// **'Salary'**
+  String get categorySalary;
+
+  /// No description provided for @categoryFreelance.
+  ///
+  /// In en, this message translates to:
+  /// **'Freelance'**
+  String get categoryFreelance;
+
+  /// No description provided for @categoryInvestment.
+  ///
+  /// In en, this message translates to:
+  /// **'Investment'**
+  String get categoryInvestment;
+
+  /// No description provided for @categoryRentalIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental Income'**
+  String get categoryRentalIncome;
+
+  /// No description provided for @categoryOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get categoryOther;
 }
 
 class _AppLocalizationsDelegate

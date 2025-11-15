@@ -109,4 +109,105 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get trySelectingADifferentTimeRange =>
       'Try selecting a different time range.';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get changeTheAppLanguage => 'Change the app language';
+
+  @override
+  String get selectLanguage => 'Select Language';
+
+  @override
+  String get clearAllData => 'Clear All Data';
+
+  @override
+  String get permanentlyDeleteAllTransactions =>
+      'Permanently delete all transactions.';
+
+  @override
+  String get confirmClearData => 'Confirm Clear Data';
+
+  @override
+  String get areYouSureYouWantToDeleteAllTransactionData =>
+      'Are you sure you want to delete all transaction data?';
+
+  @override
+  String get thisActionCannotBeUndone => 'This action cannot be undone.';
+
+  @override
+  String get clearData => 'Clear Data';
+
+  @override
+  String get allDataHasBeenCleared => 'All data has been cleared.';
+
+  @override
+  String get thisWeek => 'This Week';
+
+  @override
+  String get thisMonth => 'This Month';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get categoryGroceries => 'Groceries';
+
+  @override
+  String get categoryRestaurants => 'Restaurants';
+
+  @override
+  String get categoryTransportation => 'Transportation';
+
+  @override
+  String get categoryUtilities => 'Utilities';
+
+  @override
+  String get categoryRent => 'Rent';
+
+  @override
+  String get categoryHealthcare => 'Healthcare';
+
+  @override
+  String get categoryEntertainment => 'Entertainment';
+
+  @override
+  String get categoryShopping => 'Shopping';
+
+  @override
+  String get categoryEducation => 'Education';
+
+  @override
+  String get categoryPersonalCare => 'Personal Care';
+
+  @override
+  String get categoryTravel => 'Travel';
+
+  @override
+  String get categoryGiftsDonations => 'Gifts & Donations';
+
+  @override
+  String get categoryKids => 'Kids';
+
+  @override
+  String get categoryPets => 'Pets';
+
+  @override
+  String get categoryHome => 'Home';
+
+  @override
+  String get categorySalary => 'Salary';
+
+  @override
+  String get categoryFreelance => 'Freelance';
+
+  @override
+  String get categoryInvestment => 'Investment';
+
+  @override
+  String get categoryRentalIncome => 'Rental Income';
+
+  @override
+  String get categoryOther => 'Other';
 }

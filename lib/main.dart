@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:grade_project/all_transactions_page.dart';
 import 'package:grade_project/categories.dart';
 import 'package:grade_project/category_icons.dart';
+import 'package:grade_project/category_translations.dart';
 import 'package:grade_project/database_helper.dart';
 import 'package:grade_project/export_page.dart';
 import 'package:grade_project/settings_page.dart';
@@ -10,15 +11,31 @@ import 'package:grade_project/masareef_transaction.dart';
 import 'package:grade_project/theme.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'l10n/app_localizations.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+
+  static _MyAppState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_MyAppState>();
+}
+
+class _MyAppState extends State<MyApp> {
+  Locale _locale = const Locale('en', '');
+
+  void changeLanguage(Locale locale) {
+    setState(() {
+      _locale = locale;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +45,7 @@ class MyApp extends StatelessWidget {
       showPerformanceOverlay: false,
       title: 'Masareef',
       theme: appTheme,
+      locale: _locale,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -234,7 +252,7 @@ class _HomePageState extends State<HomePage> {
                               Icon(categoryInfo.icon,
                                   color: categoryInfo.color),
                               const SizedBox(width: 10),
-                              Text(category),
+                              Text(getCategoryDisplayName(category, context)),
                             ],
                           ),
                         );
@@ -363,17 +381,13 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final currencyFormat = NumberFormat.currency(
+        locale: Localizations.localeOf(context).toString(), symbol: '');
     return Scaffold(
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.helloAdam,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withAlpha(204))),
             Text(l10n.welcomeBack,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
@@ -452,6 +466,8 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildBalanceCard(Map<String, double> summary) {
     final l10n = AppLocalizations.of(context)!;
+    final currencyFormat = NumberFormat.currency(
+        locale: Localizations.localeOf(context).toString(), symbol: '');
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -462,7 +478,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             Text(l10n.totalBalance, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
-            Text(NumberFormat.currency(symbol: 'CFA').format(summary['balance'] ?? 0),
+            Text(currencyFormat.format(summary['balance'] ?? 0),
                 style: Theme.of(context)
                     .textTheme
                     .headlineLarge
@@ -485,6 +501,8 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildIncomeExpenseRow(
       IconData icon, String label, double amount, Color color) {
+    final currencyFormat = NumberFormat.currency(
+        locale: Localizations.localeOf(context).toString(), symbol: '');
     return Row(
       children: [
         Icon(icon, color: color, size: 20),
@@ -493,7 +511,7 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(label, style: Theme.of(context).textTheme.bodySmall),
-            Text(NumberFormat.currency(symbol: 'CFA').format(amount),
+            Text(currencyFormat.format(amount),
                 style: Theme.of(context)
                     .textTheme
                     .titleMedium
@@ -527,6 +545,9 @@ class _HomePageState extends State<HomePage> {
           return sum + (item.type == 'income' ? item.amount : -item.amount);
         });
 
+        final currencyFormat = NumberFormat.currency(
+            locale: Localizations.localeOf(context).toString(), symbol: '');
+
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 8.0),
           color: Theme.of(context).colorScheme.surfaceVariant.withAlpha(40),
@@ -543,7 +564,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Text(_formatDate(context, date), style: Theme.of(context).textTheme.titleSmall),
                       Text(
-                        NumberFormat.currency(symbol: 'CFA').format(dailyTotal),
+                        currencyFormat.format(dailyTotal),
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: dailyTotal >= 0 ? Colors.green : Colors.red,
@@ -563,9 +584,11 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildTransactionTile(MasareefTransaction tx) {
     final l10n = AppLocalizations.of(context)!;
+    final currencyFormat = NumberFormat.currency(
+        locale: Localizations.localeOf(context).toString(), symbol: '');
     final categoryInfo = categoryIcons[tx.category] ?? defaultCategoryInfo;
     final isIncome = tx.type == 'income';
-    final amountText = isIncome ? '+ ${NumberFormat.currency(symbol: 'CFA').format(tx.amount)}' : '- ${NumberFormat.currency(symbol: 'CFA').format(tx.amount)}';
+    final amountText = isIncome ? '+ ${currencyFormat.format(tx.amount)}' : '- ${currencyFormat.format(tx.amount)}';
     final amountColor = isIncome ? Colors.green : Colors.red;
 
     return Card(
@@ -580,7 +603,7 @@ class _HomePageState extends State<HomePage> {
             color: categoryInfo.color,
           ),
         ),
-        title: Text(tx.category, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(getCategoryDisplayName(tx.category, context), style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: tx.notes != null ? Text(tx.notes!) : null,
         trailing: Text(amountText, style: TextStyle(color: amountColor, fontWeight: FontWeight.bold)),
         onTap: () => _showTransactionDialog(transaction: tx),

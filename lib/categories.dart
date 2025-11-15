@@ -20,3 +20,9 @@ const List<String> incomeCategories = [
   'Rental',
   'Other',
 ];
+
+const List<List<String>> Categories = [
+  incomeCategories,
+  spendingCategories
+];
+

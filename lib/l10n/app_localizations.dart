@@ -380,6 +380,96 @@ abstract class AppLocalizations {
   /// **'Groceries'**
   String get categoryGroceries;
 
+  /// No description provided for @categoryFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Food'**
+  String get categoryFood;
+
+  /// No description provided for @categoryTransport.
+  ///
+  /// In en, this message translates to:
+  /// **'Transport'**
+  String get categoryTransport;
+
+  /// No description provided for @categoryEntertainment.
+  ///
+  /// In en, this message translates to:
+  /// **'Entertainment'**
+  String get categoryEntertainment;
+
+  /// No description provided for @categoryShopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping'**
+  String get categoryShopping;
+
+  /// No description provided for @categoryBills.
+  ///
+  /// In en, this message translates to:
+  /// **'Bills'**
+  String get categoryBills;
+
+  /// No description provided for @categoryHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get categoryHealth;
+
+  /// No description provided for @categoryTravel.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel'**
+  String get categoryTravel;
+
+  /// No description provided for @categoryFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get categoryFamily;
+
+  /// No description provided for @categoryEducation.
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get categoryEducation;
+
+  /// No description provided for @categoryOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get categoryOther;
+
+  /// No description provided for @categorySalary.
+  ///
+  /// In en, this message translates to:
+  /// **'Salary'**
+  String get categorySalary;
+
+  /// No description provided for @categoryGift.
+  ///
+  /// In en, this message translates to:
+  /// **'Gift'**
+  String get categoryGift;
+
+  /// No description provided for @categoryBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Bonus'**
+  String get categoryBonus;
+
+  /// No description provided for @categoryInvestment.
+  ///
+  /// In en, this message translates to:
+  /// **'Investment'**
+  String get categoryInvestment;
+
+  /// No description provided for @categoryRental.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental'**
+  String get categoryRental;
+
   /// No description provided for @categoryRestaurants.
   ///
   /// In en, this message translates to:
@@ -398,101 +488,59 @@ abstract class AppLocalizations {
   /// **'Utilities'**
   String get categoryUtilities;
 
-  /// No description provided for @categoryRent.
+  /// No description provided for @search.
   ///
   /// In en, this message translates to:
-  /// **'Rent'**
-  String get categoryRent;
+  /// **'Search'**
+  String get search;
 
-  /// No description provided for @categoryHealthcare.
+  /// No description provided for @noResultsFound.
   ///
   /// In en, this message translates to:
-  /// **'Healthcare'**
-  String get categoryHealthcare;
+  /// **'No results found'**
+  String get noResultsFound;
 
-  /// No description provided for @categoryEntertainment.
+  /// No description provided for @anErrorOccurred.
   ///
   /// In en, this message translates to:
-  /// **'Entertainment'**
-  String get categoryEntertainment;
+  /// **'An error occurred'**
+  String get anErrorOccurred;
 
-  /// No description provided for @categoryShopping.
+  /// No description provided for @loadDemoData.
   ///
   /// In en, this message translates to:
-  /// **'Shopping'**
-  String get categoryShopping;
+  /// **'Load Demo Data'**
+  String get loadDemoData;
 
-  /// No description provided for @categoryEducation.
+  /// No description provided for @loadTheAppWithSampleData.
   ///
   /// In en, this message translates to:
-  /// **'Education'**
-  String get categoryEducation;
+  /// **'Load the app with sample data'**
+  String get loadTheAppWithSampleData;
 
-  /// No description provided for @categoryPersonalCare.
+  /// No description provided for @areYouSureYouWantToLoadDemoData.
   ///
   /// In en, this message translates to:
-  /// **'Personal Care'**
-  String get categoryPersonalCare;
+  /// **'Are you sure you want to load demo data?'**
+  String get areYouSureYouWantToLoadDemoData;
 
-  /// No description provided for @categoryTravel.
+  /// No description provided for @load.
   ///
   /// In en, this message translates to:
-  /// **'Travel'**
-  String get categoryTravel;
+  /// **'Load'**
+  String get load;
 
-  /// No description provided for @categoryGiftsDonations.
+  /// No description provided for @demoDataLoadedSuccessfully.
   ///
   /// In en, this message translates to:
-  /// **'Gifts & Donations'**
-  String get categoryGiftsDonations;
+  /// **'Demo data loaded successfully'**
+  String get demoDataLoadedSuccessfully;
 
-  /// No description provided for @categoryKids.
+  /// No description provided for @categoryCoffee.
   ///
   /// In en, this message translates to:
-  /// **'Kids'**
-  String get categoryKids;
-
-  /// No description provided for @categoryPets.
-  ///
-  /// In en, this message translates to:
-  /// **'Pets'**
-  String get categoryPets;
-
-  /// No description provided for @categoryHome.
-  ///
-  /// In en, this message translates to:
-  /// **'Home'**
-  String get categoryHome;
-
-  /// No description provided for @categorySalary.
-  ///
-  /// In en, this message translates to:
-  /// **'Salary'**
-  String get categorySalary;
-
-  /// No description provided for @categoryFreelance.
-  ///
-  /// In en, this message translates to:
-  /// **'Freelance'**
-  String get categoryFreelance;
-
-  /// No description provided for @categoryInvestment.
-  ///
-  /// In en, this message translates to:
-  /// **'Investment'**
-  String get categoryInvestment;
-
-  /// No description provided for @categoryRentalIncome.
-  ///
-  /// In en, this message translates to:
-  /// **'Rental Income'**
-  String get categoryRentalIncome;
-
-  /// No description provided for @categoryOther.
-  ///
-  /// In en, this message translates to:
-  /// **'Other'**
-  String get categoryOther;
+  /// **'Coffee'**
+  String get categoryCoffee;
 }
 
 class _AppLocalizationsDelegate

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:grade_project/category_icons.dart';
-import 'package:grade_project/category_translations.dart';
+import 'package:grade_project/l10n/app_localizations.dart';
 import 'package:grade_project/masareef_transaction.dart';
-import 'package:grade_project/pie_chart.dart';
-import 'package:intl/intl.dart';
-import 'l10n/app_localizations.dart';
+import 'package:grade_project/widgets/category_list.dart';
+import 'package:grade_project/widgets/period_selector.dart';
+import 'package:grade_project/widgets/pie_chart_card.dart';
+import 'package:grade_project/widgets/summary_card.dart';
 
 class StatsPage extends StatefulWidget {
   final List<MasareefTransaction> transactions;
@@ -24,69 +24,6 @@ class _StatsPageState extends State<StatsPage> {
     _selectedPeriod = AppLocalizations.of(context)!.thisWeek;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final filteredTransactions = _getFilteredTransactions();
-    final spendingData = _getSpendingByCategory(filteredTransactions);
-    final totalIncome = filteredTransactions
-        .where((tx) => tx.type == 'income')
-        .fold(0.0, (sum, item) => sum + item.amount);
-    final totalExpenses = spendingData.values.fold(0.0, (sum, item) => sum + item);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.statistics, style: const TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-        elevation: 0,
-      ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  _buildPeriodSelector(),
-                  const SizedBox(height: 24),
-                  _buildSummaryCards(totalIncome, totalExpenses),
-                  const SizedBox(height: 24),
-                  if (spendingData.isNotEmpty) ...[
-                    Text(l10n.spendingBreakdown, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 16),
-                    _buildPieChartCard(spendingData, totalExpenses),
-                    const SizedBox(height: 24),
-                  ],
-                ],
-              ),
-            ),
-          ),
-          _buildCategoryList(spendingData, totalExpenses),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPeriodSelector() {
-    final l10n = AppLocalizations.of(context)!;
-    return Center(
-      child: SegmentedButton<String>(
-        segments: [
-          ButtonSegment<String>(value: l10n.today, label: Text(l10n.today)),
-          ButtonSegment<String>(value: l10n.thisWeek, label: Text(l10n.thisWeek)),
-          ButtonSegment<String>(value: l10n.thisMonth, label: Text(l10n.thisMonth)),
-        ],
-        selected: {_selectedPeriod},
-        onSelectionChanged: (Set<String> newSelection) {
-          setState(() {
-            _selectedPeriod = newSelection.first;
-          });
-        },
-      ),
-    );
-  }
-
   List<MasareefTransaction> _getFilteredTransactions() {
     final now = DateTime.now();
     final l10n = AppLocalizations.of(context)!;
@@ -99,18 +36,23 @@ class _StatsPageState extends State<StatsPage> {
           .toList();
     } else if (_selectedPeriod == l10n.thisWeek) {
       final weekAgo = now.subtract(const Duration(days: 7));
-      return widget.transactions.where((tx) => tx.date.isAfter(weekAgo)).toList();
+      return widget.transactions
+          .where((tx) => tx.date.isAfter(weekAgo))
+          .toList();
     } else if (_selectedPeriod == l10n.thisMonth) {
       return widget.transactions
-          .where((tx) => tx.date.year == now.year && tx.date.month == now.month)
+          .where(
+              (tx) => tx.date.year == now.year && tx.date.month == now.month)
           .toList();
     }
     return widget.transactions;
   }
 
-  Map<String, double> _getSpendingByCategory(List<MasareefTransaction> transactions) {
+  Map<String, double> _getSpendingByCategory(
+      List<MasareefTransaction> transactions) {
     final Map<String, double> spendingData = {};
-    final expenseTransactions = transactions.where((tx) => tx.type == 'expense');
+    final expenseTransactions =
+        transactions.where((tx) => tx.type == 'expense');
 
     for (var tx in expenseTransactions) {
       spendingData.update(
@@ -122,243 +64,77 @@ class _StatsPageState extends State<StatsPage> {
     return spendingData;
   }
 
-  Widget _buildSummaryCards(double totalIncome, double totalExpenses) {
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Row(
-      children: [
-        Expanded(
-          child: _buildSummaryCard(
-              l10n.income, totalIncome, Colors.green, Icons.arrow_upward),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _buildSummaryCard(
-              l10n.expenses, totalExpenses, Colors.red, Icons.arrow_downward),
-        ),
-      ],
-    );
-  }
+    final filteredTransactions = _getFilteredTransactions();
+    final spendingData = _getSpendingByCategory(filteredTransactions);
+    final totalIncome = filteredTransactions
+        .where((tx) => tx.type == 'income')
+        .fold(0.0, (sum, item) => sum + item.amount);
+    final totalExpenses = spendingData.values.fold(0.0, (sum, item) => sum + item);
 
-  Widget _buildSummaryCard(
-      String title, double amount, Color color, IconData icon) {
-    final currencyFormat = NumberFormat.currency(
-        locale: Localizations.localeOf(context).toString(), symbol: '');
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(title, style: Theme.of(context).textTheme.titleMedium),
-                Icon(icon, color: color, size: 28),
-              ],
-            ),
-            const SizedBox(height: 8),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                currencyFormat.format(amount),
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
-              ),
-            ),
-          ],
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.statistics,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        elevation: 0,
       ),
-    );
-  }
-
-  Widget _buildPieChartCard(
-      Map<String, double> spendingData, double totalExpenses) {
-    final l10n = AppLocalizations.of(context)!;
-    final currencyFormat = NumberFormat.currency(
-        locale: Localizations.localeOf(context).toString(), symbol: '', decimalDigits: 0);
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            SizedBox(
-              height: 150,
-              width: 150,
-              child: Stack(
-                children: [
-                  SpendingPieChart(spendingData: spendingData, isResponsive: true),
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(l10n.total, style: Theme.of(context).textTheme.bodySmall),
-                        Text(
-                          currencyFormat.format(totalExpenses),
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: spendingData.entries.map((entry) {
-                  final percentage =
-                      totalExpenses > 0 ? (entry.value / totalExpenses) * 100 : 0.0;
-                  final categoryColor =
-                      (categoryIcons[entry.key] ?? defaultCategoryInfo).color;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 10,
-                          height: 10,
-                          color: categoryColor,
-                        ),
-                        const SizedBox(width: 8),
-                        Flexible(
-                          child: Text(
-                            '${getCategoryDisplayName(entry.key, context)} (${percentage.toStringAsFixed(1)}%)',
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCategoryList(
-      Map<String, double> spendingData, double totalExpenses) {
-    final l10n = AppLocalizations.of(context)!;
-    if (spendingData.isEmpty) {
-      return SliverFillRemaining(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.pie_chart_outline, size: 80, color: Colors.grey),
-              const SizedBox(height: 20),
-              Text(l10n.noSpendingDataForThisPeriod,
-                  style: Theme.of(context).textTheme.titleLarge),
-              Text(l10n.trySelectingADifferentTimeRange,
-                  style: Theme.of(context).textTheme.bodyMedium)
-            ],
-          ),
-        ),
-      );
-    }
-
-    final sortedCategories = spendingData.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          if (index == 0) {
-            return Padding(
-              padding:
-                  const EdgeInsets.only(left: 16.0, right: 16, top: 0, bottom: 8),
-              child: Text(
-                l10n.topCategories,
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-            );
-          }
-          final entry = sortedCategories[index - 1];
-          return _buildCategoryListItem(entry, totalExpenses);
-        },
-        childCount: sortedCategories.length + 1,
-      ),
-    );
-  }
-
-  Widget _buildCategoryListItem(
-      MapEntry<String, double> entry, double totalExpenses) {
-    final percentage = totalExpenses > 0 ? (entry.value / totalExpenses) : 0.0;
-    final categoryInfo = categoryIcons[entry.key] ?? defaultCategoryInfo;
-    final currencyFormat = NumberFormat.currency(
-        locale: Localizations.localeOf(context).toString(), symbol: '');
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-      child: Card(
-        elevation: 1,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              CircleAvatar(
-                backgroundColor: categoryInfo.color.withAlpha(51),
-                child: Icon(
-                  categoryInfo.icon,
-                  color: categoryInfo.color,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(getCategoryDisplayName(entry.key, context),
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
-                    const SizedBox(height: 8),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(3),
-                      child: LinearProgressIndicator(
-                        value: percentage,
-                        backgroundColor: Colors.grey[300],
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(categoryInfo.color),
-                        minHeight: 6,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      currencyFormat.format(entry.value),
-                      style:
-                          const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                    ),
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  PeriodSelector(
+                    selectedPeriod: _selectedPeriod,
+                    onSelectionChanged: (newPeriod) {
+                      setState(() {
+                        _selectedPeriod = newPeriod;
+                      });
+                    },
                   ),
-                  const SizedBox(height: 4),
-                  Text('${(percentage * 100).toStringAsFixed(1)}%',
-                      style: Theme.of(context).textTheme.bodySmall),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SummaryCard(
+                            title: l10n.income,
+                            amount: totalIncome,
+                            color: Colors.green,
+                            icon: Icons.arrow_upward),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: SummaryCard(
+                            title: l10n.expenses,
+                            amount: totalExpenses,
+                            color: Colors.red,
+                            icon: Icons.arrow_downward),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  if (spendingData.isNotEmpty) ...[
+                    Text(l10n.spendingBreakdown,
+                        style: const TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 16),
+                    PieChartCard(
+                        spendingData: spendingData,
+                        totalExpenses: totalExpenses),
+                    const SizedBox(height: 24),
+                  ],
                 ],
-              )
-            ],
+              ),
+            ),
           ),
-        ),
+          CategoryList(
+              spendingData: spendingData, totalExpenses: totalExpenses),
+        ],
       ),
     );
   }

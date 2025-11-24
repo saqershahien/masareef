@@ -155,6 +155,51 @@ class AppLocalizationsEn extends AppLocalizations {
   String get categoryGroceries => 'Groceries';
 
   @override
+  String get categoryFood => 'Food';
+
+  @override
+  String get categoryTransport => 'Transport';
+
+  @override
+  String get categoryEntertainment => 'Entertainment';
+
+  @override
+  String get categoryShopping => 'Shopping';
+
+  @override
+  String get categoryBills => 'Bills';
+
+  @override
+  String get categoryHealth => 'Health';
+
+  @override
+  String get categoryTravel => 'Travel';
+
+  @override
+  String get categoryFamily => 'Family';
+
+  @override
+  String get categoryEducation => 'Education';
+
+  @override
+  String get categoryOther => 'Other';
+
+  @override
+  String get categorySalary => 'Salary';
+
+  @override
+  String get categoryGift => 'Gift';
+
+  @override
+  String get categoryBonus => 'Bonus';
+
+  @override
+  String get categoryInvestment => 'Investment';
+
+  @override
+  String get categoryRental => 'Rental';
+
+  @override
   String get categoryRestaurants => 'Restaurants';
 
   @override
@@ -164,50 +209,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get categoryUtilities => 'Utilities';
 
   @override
-  String get categoryRent => 'Rent';
+  String get search => 'Search';
 
   @override
-  String get categoryHealthcare => 'Healthcare';
+  String get noResultsFound => 'No results found';
 
   @override
-  String get categoryEntertainment => 'Entertainment';
+  String get anErrorOccurred => 'An error occurred';
 
   @override
-  String get categoryShopping => 'Shopping';
+  String get loadDemoData => 'Load Demo Data';
 
   @override
-  String get categoryEducation => 'Education';
+  String get loadTheAppWithSampleData => 'Load the app with sample data';
 
   @override
-  String get categoryPersonalCare => 'Personal Care';
+  String get areYouSureYouWantToLoadDemoData =>
+      'Are you sure you want to load demo data?';
 
   @override
-  String get categoryTravel => 'Travel';
+  String get load => 'Load';
 
   @override
-  String get categoryGiftsDonations => 'Gifts & Donations';
+  String get demoDataLoadedSuccessfully => 'Demo data loaded successfully';
 
   @override
-  String get categoryKids => 'Kids';
-
-  @override
-  String get categoryPets => 'Pets';
-
-  @override
-  String get categoryHome => 'Home';
-
-  @override
-  String get categorySalary => 'Salary';
-
-  @override
-  String get categoryFreelance => 'Freelance';
-
-  @override
-  String get categoryInvestment => 'Investment';
-
-  @override
-  String get categoryRentalIncome => 'Rental Income';
-
-  @override
-  String get categoryOther => 'Other';
+  String get categoryCoffee => 'Coffee';
 }

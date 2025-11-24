@@ -153,59 +153,84 @@ class AppLocalizationsAr extends AppLocalizations {
   String get categoryGroceries => 'البقالة';
 
   @override
-  String get categoryRestaurants => 'المطاعم';
+  String get categoryFood => 'طعام';
 
   @override
-  String get categoryTransportation => 'المواصلات';
+  String get categoryTransport => 'مواصلات';
 
   @override
-  String get categoryUtilities => 'خدمات';
+  String get categoryEntertainment => 'ترفيه';
 
   @override
-  String get categoryRent => 'الإيجار';
+  String get categoryShopping => 'تسوق';
 
   @override
-  String get categoryHealthcare => 'الرعاية الصحية';
+  String get categoryBills => 'فواتير';
 
   @override
-  String get categoryEntertainment => 'الترفيه';
+  String get categoryHealth => 'صحة';
 
   @override
-  String get categoryShopping => 'التسوق';
+  String get categoryTravel => 'سفر';
 
   @override
-  String get categoryEducation => 'التعليم';
+  String get categoryFamily => 'عائلة';
 
   @override
-  String get categoryPersonalCare => 'العناية الشخصية';
+  String get categoryEducation => 'تعليم';
 
   @override
-  String get categoryTravel => 'السفر';
+  String get categoryOther => 'أخرى';
 
   @override
-  String get categoryGiftsDonations => 'الهدايا والتبرعات';
+  String get categorySalary => 'راتب';
 
   @override
-  String get categoryKids => 'الأطفال';
+  String get categoryGift => 'هدية';
 
   @override
-  String get categoryPets => 'الحيوانات الأليفة';
-
-  @override
-  String get categoryHome => 'المنزل';
-
-  @override
-  String get categorySalary => 'الراتب';
-
-  @override
-  String get categoryFreelance => 'عمل حر';
+  String get categoryBonus => 'علاوة';
 
   @override
   String get categoryInvestment => 'استثمار';
 
   @override
-  String get categoryRentalIncome => 'دخل إيجار';
+  String get categoryRental => 'إيجار';
 
   @override
-  String get categoryOther => 'أخرى';
+  String get categoryRestaurants => 'مطاعم';
+
+  @override
+  String get categoryTransportation => 'مواصلات';
+
+  @override
+  String get categoryUtilities => 'خدمات';
+
+  @override
+  String get search => 'بحث';
+
+  @override
+  String get noResultsFound => 'لم يتم العثور على نتائج';
+
+  @override
+  String get anErrorOccurred => 'حدث خطأ';
+
+  @override
+  String get loadDemoData => 'تحميل بيانات تجريبية';
+
+  @override
+  String get loadTheAppWithSampleData => 'تحميل التطبيق ببيانات تجريبية';
+
+  @override
+  String get areYouSureYouWantToLoadDemoData =>
+      'هل أنت متأكد أنك تريد تحميل بيانات تجريبية؟';
+
+  @override
+  String get load => 'تحميل';
+
+  @override
+  String get demoDataLoadedSuccessfully => 'تم تحميل البيانات التجريبية بنجاح';
+
+  @override
+  String get categoryCoffee => 'قهوة';
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:grade_project/demo_data.dart' as demo;
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:grade_project/masareef_transaction.dart';
@@ -23,7 +24,7 @@ class DatabaseHelper {
     final path = join(dbPath, 'money_tracker.db');
     return await openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -37,7 +38,6 @@ class DatabaseHelper {
         date TEXT,
         category TEXT,
         type TEXT,
-        color INTEGER,
         notes TEXT
       )
     ''');
@@ -46,12 +46,16 @@ class DatabaseHelper {
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       await db.execute('ALTER TABLE transactions ADD COLUMN type TEXT');
-      await db.execute('ALTER TABLE transactions ADD COLUMN color INTEGER');
     }
     if (oldVersion < 3) {
       await db.execute('ALTER TABLE transactions ADD COLUMN notes TEXT');
-      // Here we would ideally migrate data away from the title column
-      // For now, we are just adding the new column and new transactions will use it.
+    }
+    if (oldVersion < 4) {
+      // Recreate table without the color column
+      await db.execute('CREATE TABLE transactions_new(id INTEGER PRIMARY KEY AUTOINCREMENT, amount REAL, date TEXT, category TEXT, type TEXT, notes TEXT)');
+      await db.execute('INSERT INTO transactions_new(id, amount, date, category, type, notes) SELECT id, amount, date, category, type, notes FROM transactions');
+      await db.execute('DROP TABLE transactions');
+      await db.execute('ALTER TABLE transactions_new RENAME TO transactions');
     }
   }
 
@@ -62,7 +66,6 @@ class DatabaseHelper {
       'date': transaction.date.toIso8601String(),
       'category': transaction.category,
       'type': transaction.type,
-      'color': transaction.color.value,
       'notes': transaction.notes,
     });
   }
@@ -77,7 +80,6 @@ class DatabaseHelper {
         date: DateTime.parse(maps[i]['date']),
         category: maps[i]['category'] ?? 'Other',
         type: maps[i]['type'] ?? 'expense',
-        color: Color(maps[i]['color'] ?? Colors.grey.value),
         notes: maps[i]['notes'] ?? '',
       );
     });
@@ -92,7 +94,6 @@ class DatabaseHelper {
         'date': transaction.date.toIso8601String(),
         'category': transaction.category,
         'type': transaction.type,
-        'color': transaction.color.value,
         'notes': transaction.notes,
       },
       where: 'id = ?',
@@ -113,5 +114,10 @@ class DatabaseHelper {
   Future<int> deleteAllTransactions() async {
     final db = await database;
     return await db.delete('transactions');
+  }
+
+  Future<void> insertDemoData() async {
+    final db = await database;
+    await demo.insertDemoData(db);
   }
 }

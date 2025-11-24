@@ -6,7 +6,6 @@ class MasareefTransaction {
   final DateTime date;
   final String category;
   final String type; // 'income' or 'expense'
-  final Color color;
   final String? notes;
 
   MasareefTransaction({
@@ -15,7 +14,6 @@ class MasareefTransaction {
     required this.date,
     required this.category,
     required this.type,
-    required this.color,
     this.notes,
   });
 }

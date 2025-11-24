@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 final ThemeData appTheme = fundifyTheme;
 
 final ThemeData fundifyTheme = ThemeData.light().copyWith(
+  textTheme: GoogleFonts.notoKufiArabicTextTheme(),
   primaryColor: const Color(0xFF4B39EF),
   colorScheme: const ColorScheme.light(
     primary: Color(0xFF4B39EF),

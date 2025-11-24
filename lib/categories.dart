@@ -1,6 +1,7 @@
 const List<String> spendingCategories = [
   'Groceries',
   'Food',
+  'Restaurants',
   'Transport',
   'Entertainment',
   'Shopping',
@@ -21,8 +22,33 @@ const List<String> incomeCategories = [
   'Other',
 ];
 
-const List<List<String>> Categories = [
-  incomeCategories,
-  spendingCategories
+const List<String> spendingCategoriesArabic = [
+  'بقالة',
+  'طعام',
+  'مطاعم',
+  'مواصلات',
+  'ترفيه',
+  'تسوق',
+  'فواتير',
+  'صحة',
+  'سفر',
+  'عائلة',
+  'تعليم',
+  'اخرى',
 ];
 
+const List<String> incomeCategoriesArabic = [
+  'راتب',
+  'هدية',
+  'مكافأة',
+  'استثمار',
+  'ايجار',
+  'اخرى',
+];
+
+const List<List<String>> Categories = [
+  incomeCategories,
+  spendingCategories,
+  incomeCategoriesArabic,
+  spendingCategoriesArabic
+];

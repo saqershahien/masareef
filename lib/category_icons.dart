@@ -8,6 +8,7 @@ class CategoryInfo {
 }
 
 const Map<String, CategoryInfo> categoryIcons = {
+  // Spending
   'Groceries': CategoryInfo(icon: Icons.shopping_cart, color: Colors.green),
   'Food': CategoryInfo(icon: Icons.fastfood, color: Colors.orange),
   'Transport': CategoryInfo(icon: Icons.directions_car, color: Colors.blue),
@@ -18,7 +19,12 @@ const Map<String, CategoryInfo> categoryIcons = {
   'Travel': CategoryInfo(icon: Icons.airplanemode_active, color: Colors.teal),
   'Family': CategoryInfo(icon: Icons.group, color: Colors.cyan),
   'Education': CategoryInfo(icon: Icons.school, color: Colors.lime),
+  'Restaurants': CategoryInfo(icon: Icons.restaurant, color: Colors.redAccent),
+  'Transportation': CategoryInfo(icon: Icons.tram, color: Colors.blueGrey),
+  'Utilities': CategoryInfo(icon: Icons.lightbulb, color: Colors.yellowAccent),
   'Other': CategoryInfo(icon: Icons.category, color: Colors.grey),
+
+  // Income
   'Salary': CategoryInfo(icon: Icons.attach_money, color: Colors.lightGreen),
   'Gift': CategoryInfo(icon: Icons.card_giftcard, color: Colors.amber),
   'Bonus': CategoryInfo(icon: Icons.star, color: Colors.yellow),

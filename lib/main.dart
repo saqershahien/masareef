@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:grade_project/all_transactions_page.dart';
 import 'package:grade_project/database_helper.dart';
+import 'package:grade_project/finance_utils.dart';
 import 'package:grade_project/settings_page.dart';
 import 'package:grade_project/stats_page.dart';
 import 'package:grade_project/masareef_transaction.dart';
@@ -15,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'l10n/app_localizations.dart';
 
 void main() {
+
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
@@ -139,24 +142,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Map<String, double> _getFinancialSummary(
-      List<MasareefTransaction> transactions) {
-    double income = 0.0;
-    double expenses = 0.0;
-    for (var tx in transactions) {
-      if (tx.type == 'income') {
-        income += tx.amount;
-      } else {
-        expenses += tx.amount;
-      }
-    }
-    return {
-      'income': income,
-      'expenses': expenses,
-      'balance': income - expenses,
-    };
-  }
-
   void _deleteTransaction(int id) async {
     await DatabaseHelper().deleteTransaction(id);
     _refreshTransactions();
@@ -233,7 +218,7 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  BalanceCard(summary: _getFinancialSummary(_transactions)),
+                  BalanceCard(summary: getFinancialSummary(_transactions)),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

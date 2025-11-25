@@ -34,7 +34,9 @@ class PieChartCard extends StatelessWidget {
               width: 150,
               child: Stack(
                 children: [
-                  SpendingPieChart(spendingData: spendingData, isResponsive: true),
+                  RepaintBoundary(
+                    child: SpendingPieChart(spendingData: spendingData, isResponsive: true),
+                  ),
                   Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

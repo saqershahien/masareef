@@ -19,6 +19,8 @@ class _AllTransactionsPageState extends State<AllTransactionsPage> {
   List<MasareefTransaction> _filteredTransactions = [];
   final _searchController = TextEditingController();
   bool _isLoading = true;
+  DateTime? _startDate;
+  DateTime? _endDate;
 
   @override
   void initState() {
@@ -49,11 +51,48 @@ class _AllTransactionsPageState extends State<AllTransactionsPage> {
     final query = _searchController.text.toLowerCase();
     setState(() {
       _filteredTransactions = _allTransactions.where((tx) {
-        final categoryMatch =
-            getCategoryDisplayName(tx.category, context).toLowerCase().contains(query);
+        final categoryMatch = getCategoryDisplayName(tx.category, context)
+            .toLowerCase()
+            .contains(query);
         final notesMatch = tx.notes?.toLowerCase().contains(query) ?? false;
-        return categoryMatch || notesMatch;
+        final amountMatch = tx.amount.toString().contains(query);
+        final dateMatch = (_startDate == null ||
+                tx.date.isAfter(_startDate!.subtract(const Duration(days: 1)))) &&
+            (_endDate == null ||
+                tx.date.isBefore(_endDate!.add(const Duration(days: 1))));
+
+        if (query.isEmpty) {
+          return dateMatch;
+        } else {
+          return (categoryMatch || notesMatch || amountMatch) && dateMatch;
+        }
       }).toList();
+    });
+  }
+
+  Future<void> _selectDateRange() async {
+    final picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+      initialDateRange: _startDate != null && _endDate != null
+          ? DateTimeRange(start: _startDate!, end: _endDate!)
+          : null,
+    );
+    if (picked != null) {
+      setState(() {
+        _startDate = picked.start;
+        _endDate = picked.end;
+        _filterTransactions();
+      });
+    }
+  }
+
+  void _clearDateFilter() {
+    setState(() {
+      _startDate = null;
+      _endDate = null;
+      _filterTransactions();
     });
   }
 
@@ -62,7 +101,101 @@ class _AllTransactionsPageState extends State<AllTransactionsPage> {
     _refreshTransactions();
   }
 
-  void _showDeleteConfirmationDialog(int id) {
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.allTransactions),
+        elevation: 0,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
+      ),
+      body: Column(
+        children: [
+          _SearchBar(
+            searchController: _searchController,
+            onFilterPressed: _selectDateRange,
+            onClearFilter: _clearDateFilter,
+            isFilterActive: _startDate != null || _endDate != null,
+          ),
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _TransactionList(
+                    allTransactions: _allTransactions,
+                    filteredTransactions: _filteredTransactions,
+                    onDelete: _deleteTransaction,
+                    onRefresh: _refreshTransactions,
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SearchBar extends StatelessWidget {
+  const _SearchBar({
+    required this.searchController,
+    required this.onFilterPressed,
+    required this.onClearFilter,
+    required this.isFilterActive,
+  });
+
+  final TextEditingController searchController;
+  final VoidCallback onFilterPressed;
+  final VoidCallback onClearFilter;
+  final bool isFilterActive;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: searchController,
+              decoration: InputDecoration(
+                labelText: l10n.search,
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.filter_list),
+            onPressed: onFilterPressed,
+          ),
+          if (isFilterActive)
+            IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: onClearFilter,
+            )
+        ],
+      ),
+    );
+  }
+}
+
+class _TransactionList extends StatelessWidget {
+  const _TransactionList({
+    required this.allTransactions,
+    required this.filteredTransactions,
+    required this.onDelete,
+    required this.onRefresh,
+  });
+
+  final List<MasareefTransaction> allTransactions;
+  final List<MasareefTransaction> filteredTransactions;
+  final void Function(int) onDelete;
+  final Future<void> Function() onRefresh;
+
+  void _showDeleteConfirmationDialog(BuildContext context, int id) {
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
@@ -83,7 +216,7 @@ class _AllTransactionsPageState extends State<AllTransactionsPage> {
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
               onPressed: () {
-                _deleteTransaction(id);
+                onDelete(id);
                 Navigator.of(bcontext).pop();
               },
             ),
@@ -122,44 +255,15 @@ class _AllTransactionsPageState extends State<AllTransactionsPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.allTransactions),
-        elevation: 0,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        foregroundColor: Theme.of(context).colorScheme.onSurface,
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                labelText: l10n.search,
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _allTransactions.isEmpty
-                    ? Center(child: Text(l10n.noTransactionsYet))
-                    : _filteredTransactions.isEmpty
-                        ? Center(child: Text(l10n.noResultsFound))
-                        : _buildGroupedList(),
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildGroupedList() {
-    final groupedTransactions = _groupTransactionsByDate(_filteredTransactions);
+    if (allTransactions.isEmpty) {
+      return Center(child: Text(l10n.noTransactionsYet));
+    }
+    if (filteredTransactions.isEmpty) {
+      return Center(child: Text(l10n.noResultsFound));
+    }
+
+    final groupedTransactions = _groupTransactionsByDate(filteredTransactions);
     final sortedDates = groupedTransactions.keys.toList()
       ..sort((a, b) => b.compareTo(a));
 
@@ -211,7 +315,8 @@ class _AllTransactionsPageState extends State<AllTransactionsPage> {
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                return _buildTransactionTile(transactionsForDate[index]);
+                return _buildTransactionTile(
+                    context, transactionsForDate[index]);
               },
               childCount: transactionsForDate.length,
             ),
@@ -221,7 +326,7 @@ class _AllTransactionsPageState extends State<AllTransactionsPage> {
     );
   }
 
-  Widget _buildTransactionTile(MasareefTransaction tx) {
+  Widget _buildTransactionTile(BuildContext context, MasareefTransaction tx) {
     final categoryInfo = categoryIcons[tx.category] ?? defaultCategoryInfo;
     final isIncome = tx.type == 'income';
     final currencyFormat = NumberFormat.currency(
@@ -233,9 +338,9 @@ class _AllTransactionsPageState extends State<AllTransactionsPage> {
     return ListTile(
       onTap: () => showTransactionDialog(context,
           transaction: tx,
-          onTransactionAdded: _refreshTransactions,
-          onTransactionDeleted: _deleteTransaction),
-      onLongPress: () => _showDeleteConfirmationDialog(tx.id!),
+          onTransactionAdded: onRefresh,
+          onTransactionDeleted: onDelete),
+      onLongPress: () => _showDeleteConfirmationDialog(context, tx.id!),
       leading: CircleAvatar(
         backgroundColor: categoryInfo.color.withOpacity(0.1),
         child: Icon(categoryInfo.icon, color: categoryInfo.color, size: 20),

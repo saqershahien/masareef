@@ -3,7 +3,7 @@ import 'package:grade_project/category_icons.dart';
 import 'package:grade_project/category_translations.dart';
 import 'package:grade_project/database_helper.dart';
 import 'package:grade_project/masareef_transaction.dart';
-import 'package:grade_project/widgets/transaction_dialog.dart';
+import 'package:grade_project/transaction_detail_page.dart'; // Import the new page
 import 'package:intl/intl.dart';
 import 'l10n/app_localizations.dart';
 
@@ -101,6 +101,13 @@ class _AllTransactionsPageState extends State<AllTransactionsPage> {
     _refreshTransactions();
   }
 
+  Future<void> _navigateToTransactionDetail(MasareefTransaction? transaction) async {
+    final result = await Navigator.push<bool?>(context, MaterialPageRoute(builder: (context) => TransactionDetailPage(transaction: transaction)));
+    if (result == true) {
+      _refreshTransactions();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -127,6 +134,7 @@ class _AllTransactionsPageState extends State<AllTransactionsPage> {
                     filteredTransactions: _filteredTransactions,
                     onDelete: _deleteTransaction,
                     onRefresh: _refreshTransactions,
+                    onTransactionTap: _navigateToTransactionDetail, // Pass the new navigation function
                   ),
           ),
         ],
@@ -188,12 +196,14 @@ class _TransactionList extends StatelessWidget {
     required this.filteredTransactions,
     required this.onDelete,
     required this.onRefresh,
+    required this.onTransactionTap,
   });
 
   final List<MasareefTransaction> allTransactions;
   final List<MasareefTransaction> filteredTransactions;
   final void Function(int) onDelete;
   final Future<void> Function() onRefresh;
+  final void Function(MasareefTransaction) onTransactionTap; // New callback
 
   void _showDeleteConfirmationDialog(BuildContext context, int id) {
     final l10n = AppLocalizations.of(context)!;
@@ -336,10 +346,7 @@ class _TransactionList extends StatelessWidget {
     final amountColor = isIncome ? Colors.green : Colors.red;
 
     return ListTile(
-      onTap: () => showTransactionDialog(context,
-          transaction: tx,
-          onTransactionAdded: onRefresh,
-          onTransactionDeleted: onDelete),
+      onTap: () => onTransactionTap(tx),
       onLongPress: () => _showDeleteConfirmationDialog(context, tx.id!),
       leading: CircleAvatar(
         backgroundColor: categoryInfo.color.withOpacity(0.1),

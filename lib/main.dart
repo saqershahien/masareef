@@ -7,9 +7,9 @@ import 'package:grade_project/settings_page.dart';
 import 'package:grade_project/stats_page.dart';
 import 'package:grade_project/masareef_transaction.dart';
 import 'package:grade_project/theme.dart';
+import 'package:grade_project/transaction_detail_page.dart'; // Import the new page
 import 'package:grade_project/widgets/balance_card.dart';
 import 'package:grade_project/widgets/empty_state.dart';
-import 'package:grade_project/widgets/transaction_dialog.dart';
 import 'package:grade_project/widgets/transaction_list.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -173,10 +173,20 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  /// Deletes a transaction from the database and refreshes the list.
-  void _deleteTransaction(int id) async {
-    await DatabaseHelper().deleteTransaction(id);
-    _refreshTransactions();
+  /// Opens the transaction detail page for adding a new transaction.
+  void _navigateToAddTransaction() async {
+    final result = await Navigator.push<bool?>(context, MaterialPageRoute(builder: (context) => const TransactionDetailPage()));
+    if (result == true) {
+      _refreshTransactions();
+    }
+  }
+
+  /// Opens the transaction detail page for editing an existing transaction.
+  void _navigateToEditTransaction(MasareefTransaction transaction) async {
+    final result = await Navigator.push<bool?>(context, MaterialPageRoute(builder: (context) => TransactionDetailPage(transaction: transaction)));
+    if (result == true) {
+      _refreshTransactions();
+    }
   }
 
   /// Shows a confirmation dialog before deleting a transaction.
@@ -200,9 +210,12 @@ class _HomePageState extends State<HomePage> {
                 l10n.delete,
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
-              onPressed: () {
-                _deleteTransaction(id);
-                Navigator.of(bcontext).pop();
+              onPressed: () async {
+                await DatabaseHelper().deleteTransaction(id);
+                if (mounted) {
+                  Navigator.of(bcontext).pop();
+                  _refreshTransactions();
+                }
               },
             ),
           ],
@@ -240,12 +253,6 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ],
-      ),
-      // The floating action button to add a new transaction.
-      floatingActionButton: FloatingActionButton(
-        onPressed: () =>
-            showTransactionDialog(context, onTransactionAdded: _refreshTransactions),
-        child: const Icon(Icons.add),
       ),
       // The main content of the screen.
       body: _isLoading
@@ -285,11 +292,7 @@ class _HomePageState extends State<HomePage> {
                         ? const EmptyState() // Shows a message if there are no transactions.
                         : TransactionList(
                             transactions: _transactions,
-                            onTransactionTap: (tx) => showTransactionDialog(
-                                context,
-                                transaction: tx,
-                                onTransactionAdded: _refreshTransactions,
-                                onTransactionDeleted: _deleteTransaction),
+                            onTransactionTap: _navigateToEditTransaction,
                             formatDate: _formatDate,
                             onTransactionLongPress: (id) =>
                                 _showDeleteConfirmationDialog(id),
@@ -299,19 +302,36 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
       // The bottom navigation bar.
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.home),
-            label: l10n.home,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.bar_chart),
-            label: l10n.stats,
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.home),
+              color: _selectedIndex == 0
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurface,
+              onPressed: () => _onItemTapped(0),
+              tooltip: l10n.home,
+            ),
+            FloatingActionButton.small(
+              backgroundColor: Colors.green,
+              onPressed: _navigateToAddTransaction,
+              tooltip: l10n.addNewTransaction,
+              elevation: 0,
+              highlightElevation: 0,
+              child: const Icon(Icons.add,color: Colors.black87,),
+            ),
+            IconButton(
+              icon: const Icon(Icons.bar_chart),
+              color: _selectedIndex == 1
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurface,
+              onPressed: () => _onItemTapped(1),
+              tooltip: l10n.stats,
+            ),
+          ],
+        ),
       ),
     );
   }

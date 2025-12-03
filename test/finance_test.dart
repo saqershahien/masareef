@@ -1,7 +1,6 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:grade_project/finance_utils.dart';
 import 'package:grade_project/masareef_transaction.dart';
-
+import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('getFinancialSummary', () {
     test('returns correct summary for a list of transactions', () {

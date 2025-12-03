@@ -322,7 +322,7 @@ class _HomePageState extends State<HomePage> {
               tooltip: l10n.stats,
             ),
             FloatingActionButton.small(
-              backgroundColor: Colors.green,
+              backgroundColor: Colors.grey[300],
               onPressed: _navigateToAddTransaction,
               tooltip: l10n.addNewTransaction,
               elevation: 0,

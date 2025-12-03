@@ -89,7 +89,7 @@ Future<void> insertDemoData(Database db) async {
       type: 'income',
       notes: 'Apartment rent',
     ),
-     MasareefTransaction(
+    MasareefTransaction(
       amount: 60.0,
       date: DateTime.now().subtract(const Duration(days: 7)),
       category: 'Restaurants',
@@ -103,7 +103,7 @@ Future<void> insertDemoData(Database db) async {
       type: 'expense',
       notes: 'Pharmacy',
     ),
-     MasareefTransaction(
+    MasareefTransaction(
       amount: 100.0,
       date: DateTime.now().subtract(const Duration(days: 12)),
       category: 'Travel',

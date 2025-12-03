@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:grade_project/demo_data.dart' as demo;
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -52,8 +51,12 @@ class DatabaseHelper {
     }
     if (oldVersion < 4) {
       // Recreate table without the color column
-      await db.execute('CREATE TABLE transactions_new(id INTEGER PRIMARY KEY AUTOINCREMENT, amount REAL, date TEXT, category TEXT, type TEXT, notes TEXT)');
-      await db.execute('INSERT INTO transactions_new(id, amount, date, category, type, notes) SELECT id, amount, date, category, type, notes FROM transactions');
+      await db.execute(
+        'CREATE TABLE transactions_new(id INTEGER PRIMARY KEY AUTOINCREMENT, amount REAL, date TEXT, category TEXT, type TEXT, notes TEXT)',
+      );
+      await db.execute(
+        'INSERT INTO transactions_new(id, amount, date, category, type, notes) SELECT id, amount, date, category, type, notes FROM transactions',
+      );
       await db.execute('DROP TABLE transactions');
       await db.execute('ALTER TABLE transactions_new RENAME TO transactions');
     }
@@ -72,7 +75,10 @@ class DatabaseHelper {
 
   Future<List<MasareefTransaction>> getTransactions() async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('transactions', orderBy: 'date DESC');
+    final List<Map<String, dynamic>> maps = await db.query(
+      'transactions',
+      orderBy: 'date DESC',
+    );
     return List.generate(maps.length, (i) {
       return MasareefTransaction(
         id: maps[i]['id'],
@@ -103,11 +109,7 @@ class DatabaseHelper {
 
   Future<int> deleteTransaction(int id) async {
     final db = await database;
-    return await db.delete(
-      'transactions',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('transactions', where: 'id = ?', whereArgs: [id]);
   }
 
   // Deletes all records from the transactions table.

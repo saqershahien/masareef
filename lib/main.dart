@@ -8,7 +8,7 @@ import 'package:grade_project/stats_page.dart';
 import 'package:grade_project/masareef_transaction.dart';
 import 'package:grade_project/theme.dart';
 import 'package:grade_project/transaction_detail_page.dart'; // Import the new page
-import 'package:grade_project/widgets/balance_card.dart';
+import 'package:grade_project/widgets/month_balance_card.dart';
 import 'package:grade_project/widgets/empty_state.dart';
 import 'package:grade_project/widgets/transaction_list.dart';
 import 'package:intl/intl.dart';
@@ -110,7 +110,7 @@ class _HomePageState extends State<HomePage> {
   // A list to hold all the transactions from the database.
   List<MasareefTransaction> _transactions = [];
   // A map to hold the financial summary.
-  Map<String, double> _summary = {'income': 0, 'expenses': 0, 'balance': 0};
+  Map<String, double> _monthlySummary = {'income': 0, 'expenses': 0, 'balance': 0};
   // A boolean to indicate if the data is currently being loaded.
   bool _isLoading = true;
   // The index of the currently selected item in the BottomNavigationBar.
@@ -145,10 +145,10 @@ class _HomePageState extends State<HomePage> {
       _isLoading = true;
     });
     final data = await DatabaseHelper().getTransactions();
-    final summary = getFinancialSummary(data);
+    final summary = getMonthlyFinancialSummary(data);
     setState(() {
       _transactions = data;
-      _summary = summary;
+      _monthlySummary = summary;
       _isLoading = false;
     });
   }
@@ -262,7 +262,7 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   // A card to display the financial summary (income, expenses, balance).
-                  BalanceCard(summary: _summary),
+                  MonthBalanceCard(summary: _monthlySummary),
                   const SizedBox(height: 20),
                   // The header for the recent transactions list.
                   Row(
@@ -322,7 +322,7 @@ class _HomePageState extends State<HomePage> {
               tooltip: l10n.stats,
             ),
             FloatingActionButton.small(
-              backgroundColor: Colors.grey[300],
+              backgroundColor: Colors.green,
               onPressed: _navigateToAddTransaction,
               tooltip: l10n.addNewTransaction,
               elevation: 0,

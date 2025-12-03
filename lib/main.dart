@@ -155,21 +155,33 @@ class _HomePageState extends State<HomePage> {
 
   /// Handles the tap events on the BottomNavigationBar.
   void _onItemTapped(int index) {
-    if (index == 1) {
-      // Navigates to the StatsPage when the second item is tapped.
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => StatsPage(
-            transactions: _transactions,
+    switch (index) {
+      case 0: // Home
+        setState(() {
+          _selectedIndex = index;
+        });
+        break;
+      case 1: // Stats
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => StatsPage(
+              transactions: _transactions,
+            ),
           ),
-        ),
-      ).then((_) => _refreshTransactions());
-    } else {
-      // Updates the selected index for the home page.
-      setState(() {
-        _selectedIndex = index;
-      });
+        ).then((_) => _refreshTransactions());
+        break;
+      case 2: // Robot
+        // Future use. Do nothing.
+        break;
+      case 3: // Settings
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const SettingsPage(),
+          ),
+        ).then((_) => _refreshTransactions());
+        break;
     }
   }
 
@@ -239,20 +251,7 @@ class _HomePageState extends State<HomePage> {
                     color: Theme.of(context).colorScheme.onSurface)),
           ],
         ),
-        actions: [
-          // An icon button to navigate to the SettingsPage.
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const SettingsPage(),
-                ),
-              ).then((_) => _refreshTransactions());
-            },
-          ),
-        ],
+        actions: [],
       ),
       // The main content of the screen.
       body: _isLoading
@@ -314,14 +313,6 @@ class _HomePageState extends State<HomePage> {
               onPressed: () => _onItemTapped(0),
               tooltip: l10n.home,
             ),
-            FloatingActionButton.small(
-              backgroundColor: Colors.green,
-              onPressed: _navigateToAddTransaction,
-              tooltip: l10n.addNewTransaction,
-              elevation: 0,
-              highlightElevation: 0,
-              child: const Icon(Icons.add,color: Colors.black87,),
-            ),
             IconButton(
               icon: const Icon(Icons.bar_chart),
               color: _selectedIndex == 1
@@ -329,6 +320,30 @@ class _HomePageState extends State<HomePage> {
                   : Theme.of(context).colorScheme.onSurface,
               onPressed: () => _onItemTapped(1),
               tooltip: l10n.stats,
+            ),
+            FloatingActionButton.small(
+              backgroundColor: Colors.grey[300],
+              onPressed: _navigateToAddTransaction,
+              tooltip: l10n.addNewTransaction,
+              elevation: 0,
+              highlightElevation: 0,
+              child: const Icon(Icons.add,color: Colors.black87,),
+            ),
+            IconButton(
+              icon: const Icon(Icons.smart_toy_outlined),
+              color: _selectedIndex == 2
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurface,
+              onPressed: () => _onItemTapped(2),
+              tooltip: 'Assistant',
+            ),
+            IconButton(
+              icon: const Icon(Icons.settings),
+              color: _selectedIndex == 3
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurface,
+              onPressed: () => _onItemTapped(3),
+              tooltip: 'Settings',
             ),
           ],
         ),

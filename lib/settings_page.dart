@@ -153,7 +153,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.settings),
-        backgroundColor: Colors.blueGrey[900],
+        backgroundColor: Colors.blueGrey[700],
         elevation: 0,
       ),
       body: ListView(

@@ -1,6 +1,8 @@
 {
     "helloAdam": "Hello Adam",
     "welcomeBack": "Welcome Back!",
+    "goodMorning": "Good Morning",
+    "goodEvening": "Good Evening",
     "totalBalance": "Total Balance",
     "income": "Income",
     "expenses": "Expenses",

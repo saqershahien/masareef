@@ -15,6 +15,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get welcomeBack => 'مرحباً بعودتك!';
 
   @override
+  String get goodMorning => 'صباح الخير';
+
+  @override
+  String get goodEvening => 'مساء الخير';
+
+  @override
   String get totalBalance => 'الرصيد الإجمالي';
 
   @override

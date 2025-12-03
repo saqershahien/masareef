@@ -1,6 +1,8 @@
 {
     "helloAdam": "مرحباً آدم",
     "welcomeBack": "مرحباً بعودتك!",
+    "goodMorning": "صباح الخير",
+    "goodEvening": "مساء الخير",
     "totalBalance": "الرصيد الإجمالي",
     "income": "الدخل",
     "expenses": "المصاريف",

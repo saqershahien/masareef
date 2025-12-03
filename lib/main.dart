@@ -236,6 +236,16 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  String _getGreeting(BuildContext context) {
+    final hour = DateTime.now().hour;
+    final l10n = AppLocalizations.of(context)!;
+    if (hour < 12) {
+      return l10n.goodMorning;
+    } else {
+      return l10n.goodEvening;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -245,7 +255,7 @@ class _HomePageState extends State<HomePage> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.welcomeBack,
+            Text(_getGreeting(context),
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.onSurface)),
@@ -322,7 +332,7 @@ class _HomePageState extends State<HomePage> {
               tooltip: l10n.stats,
             ),
             FloatingActionButton.small(
-              backgroundColor: Colors.grey[300],
+              backgroundColor: Colors.green,
               onPressed: _navigateToAddTransaction,
               tooltip: l10n.addNewTransaction,
               elevation: 0,

@@ -1,42 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:grade_project/all_transactions_page.dart';
-import 'package:grade_project/database_helper.dart';
-import 'package:grade_project/finance_utils.dart';
-import 'package:grade_project/settings_page.dart';
-import 'package:grade_project/stats_page.dart';
-import 'package:grade_project/masareef_transaction.dart';
+import 'package:grade_project/home_page.dart';
 import 'package:grade_project/theme.dart';
-import 'package:grade_project/transaction_detail_page.dart'; // Import the new page
-import 'package:grade_project/widgets/month_balance_card.dart';
-import 'package:grade_project/widgets/empty_state.dart';
-import 'package:grade_project/widgets/transaction_list.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'l10n/app_localizations.dart';
 
-/// The main entry point of the application.
+/// The main entry point for the Masareef application.
+///
+/// This function ensures that the Flutter bindings are initialized and then runs
+/// the [MyApp] widget, which is the root of the application.
 void main() {
   // Ensures that the Flutter binding is initialized before running the app.
+  // This is necessary to use platform channels to call native code, which
+  // is done by some plugins.
   WidgetsFlutterBinding.ensureInitialized();
   // Runs the root widget of the application.
   runApp(const MyApp());
 }
 
-/// The root widget of the application. It is a StatefulWidget to manage theme and locale changes.
+/// The root widget of the Masareef application.
+///
+/// This widget is a [StatefulWidget] that manages the application's theme and
+/// locale. It uses a [GlobalKey] to allow descendant widgets to access its
+/// state and change the application's language.
 class MyApp extends StatefulWidget {
+  /// Creates the root widget of the application.
   const MyApp({super.key});
 
   @override
   State<MyApp> createState() => MyAppState();
 
-  /// A static method to allow descendant widgets to access MyAppState.
+  /// A static method to allow descendant widgets to access [MyAppState].
+  ///
+  /// This method is used to find the [MyAppState] in the widget tree, which
+  /// allows descendant widgets to call methods like [changeLanguage].
+  ///
+  /// Example:
+  /// ```dart
+  /// MyApp.of(context)?.changeLanguage(const Locale('ar', ''));
+  /// ```
   static MyAppState? of(BuildContext context) =>
       context.findAncestorStateOfType<MyAppState>();
 }
 
-/// The state for the MyApp widget, handling locale changes.
+/// The state for the [MyApp] widget.
+///
+/// This class handles the logic for changing the application's locale and
+/// persisting the user's language preference.
 class MyAppState extends State<MyApp> {
   // The current locale of the application. Defaults to English.
   Locale _locale = const Locale('en', '');
@@ -48,7 +58,11 @@ class MyAppState extends State<MyApp> {
     _loadLocale();
   }
 
-  /// Loads the locale from shared preferences.
+  /// Loads the locale from [SharedPreferences].
+  ///
+  /// This method retrieves the saved language code from shared preferences and
+  /// updates the application's locale. If no language code is found, it
+  /// defaults to English.
   Future<void> _loadLocale() async {
     final prefs = await SharedPreferences.getInstance();
     final languageCode = prefs.getString('languageCode') ?? 'en';
@@ -57,7 +71,11 @@ class MyAppState extends State<MyApp> {
     });
   }
 
-  /// Changes the application's language and saves the preference.
+  /// Changes the application's language and saves the preference to [SharedPreferences].
+  ///
+  /// This method is called by descendant widgets to change the application's
+  /// language. It takes a [Locale] as input and updates the state, which
+  /// rebuilds the widget tree with the new language.
   Future<void> changeLanguage(Locale locale) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('languageCode', locale.languageCode);
@@ -69,17 +87,28 @@ class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     // MaterialApp is the root of the app's widget tree.
+    // It provides many of the basic features that applications need, such as
+    // routing, theming, and localization.
     return MaterialApp(
-      // Hides the debug banner in the top-right corner.
+      // Hides the debug banner in the top-right corner of the screen.
       debugShowCheckedModeBanner: false,
+      // Hides the semantics debugger overlay, which is used for inspecting the
+      // semantics of the widget tree.
       showSemanticsDebugger: false,
+      // Hides the performance overlay, which displays performance information
+      // on top of the application.
       showPerformanceOverlay: false,
+      // The title of the application, which is used by the operating system
+      // to identify the app.
       title: 'Masareef',
-      // Sets the global theme for the application.
+      // Sets the global theme for the application, which defines the colors,
+      // fonts, and other visual properties of the widgets.
       theme: appTheme,
-      // Sets the current locale for the application.
+      // Sets the current locale for the application, which determines the
+      // language and formatting of the text and other elements.
       locale: _locale,
-      // Provides delegates for internationalization.
+      // Provides delegates for internationalization, which are responsible for
+      // loading the localized strings and other resources.
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -91,273 +120,9 @@ class MyAppState extends State<MyApp> {
         Locale('en', ''), // English, no country code
         Locale('ar', ''), // Arabic, no country code
       ],
-      // The default route of the application.
+      // The default route of the application, which is the widget that is
+      // displayed when the app is first launched.
       home: const HomePage(),
-    );
-  }
-}
-
-/// The main screen of the application.
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-/// The state for the HomePage widget.
-class _HomePageState extends State<HomePage> {
-  // A list to hold all the transactions from the database.
-  List<MasareefTransaction> _transactions = [];
-  // A map to hold the financial summary.
-  Map<String, double> _monthlySummary = {'income': 0, 'expenses': 0, 'balance': 0};
-  // A boolean to indicate if the data is currently being loaded.
-  bool _isLoading = true;
-  // The index of the currently selected item in the BottomNavigationBar.
-  int _selectedIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    // Fetches the transactions from the database when the widget is first created.
-    _refreshTransactions();
-  }
-
-  /// Formats a DateTime object into a user-friendly string (e.g., "Today", "Yesterday", or the actual date).
-  String _formatDate(BuildContext context, DateTime date) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = DateTime(now.year, now.month, now.day - 1);
-    final dateToCompare = DateTime(date.year, date.month, date.day);
-
-    if (dateToCompare == today) {
-      return AppLocalizations.of(context)!.today;
-    } else if (dateToCompare == yesterday) {
-      return AppLocalizations.of(context)!.yesterday;
-    } else {
-      return DateFormat.yMMMd().format(date);
-    }
-  }
-
-  /// Fetches all transactions from the database and updates the state.
-  Future<void> _refreshTransactions() async {
-    setState(() {
-      _isLoading = true;
-    });
-    final data = await DatabaseHelper().getTransactions();
-    final summary = getMonthlyFinancialSummary(data);
-    setState(() {
-      _transactions = data;
-      _monthlySummary = summary;
-      _isLoading = false;
-    });
-  }
-
-  /// Handles the tap events on the BottomNavigationBar.
-  void _onItemTapped(int index) {
-    switch (index) {
-      case 0: // Home
-        setState(() {
-          _selectedIndex = index;
-        });
-        break;
-      case 1: // Stats
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => StatsPage(
-              transactions: _transactions,
-            ),
-          ),
-        ).then((_) => _refreshTransactions());
-        break;
-      case 2: // Robot
-        // Future use. Do nothing.
-        break;
-      case 3: // Settings
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const SettingsPage(),
-          ),
-        ).then((_) => _refreshTransactions());
-        break;
-    }
-  }
-
-  /// Opens the transaction detail page for adding a new transaction.
-  void _navigateToAddTransaction() async {
-    final result = await Navigator.push<bool?>(context, MaterialPageRoute(builder: (context) => const TransactionDetailPage()));
-    if (result == true) {
-      _refreshTransactions();
-    }
-  }
-
-  /// Opens the transaction detail page for editing an existing transaction.
-  void _navigateToEditTransaction(MasareefTransaction transaction) async {
-    final result = await Navigator.push<bool?>(context, MaterialPageRoute(builder: (context) => TransactionDetailPage(transaction: transaction)));
-    if (result == true) {
-      _refreshTransactions();
-    }
-  }
-
-  /// Shows a confirmation dialog before deleting a transaction.
-  void _showDeleteConfirmationDialog(int id) {
-    final l10n = AppLocalizations.of(context)!;
-    showDialog(
-      context: context,
-      builder: (BuildContext bcontext) {
-        return AlertDialog(
-          title: Text(l10n.delete),
-          content: Text(l10n.areYouSureYouWantToDeleteThisTransaction),
-          actions: <Widget>[
-            TextButton(
-              child: Text(l10n.cancel),
-              onPressed: () {
-                Navigator.of(bcontext).pop();
-              },
-            ),
-            TextButton(
-              child: Text(
-                l10n.delete,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
-              ),
-              onPressed: () async {
-                await DatabaseHelper().deleteTransaction(id);
-                if (mounted) {
-                  Navigator.of(bcontext).pop();
-                  _refreshTransactions();
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  String _getGreeting(BuildContext context) {
-    final hour = DateTime.now().hour;
-    final l10n = AppLocalizations.of(context)!;
-    if (hour < 12) {
-      return l10n.goodMorning;
-    } else {
-      return l10n.goodEvening;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      // The top app bar of the screen.
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(_getGreeting(context),
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface)),
-          ],
-        ),
-        actions: [],
-      ),
-      // The main content of the screen.
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator()) // Shows a loader while data is being fetched.
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  // A card to display the financial summary (income, expenses, balance).
-                  MonthBalanceCard(summary: _monthlySummary),
-                  const SizedBox(height: 20),
-                  // The header for the recent transactions list.
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(l10n.recentTransactions,
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      // A button to navigate to the page with all transactions.
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const AllTransactionsPage()),
-                          ).then((value) => _refreshTransactions());
-                        },
-                        child: Text(l10n.viewAll),
-                      ),
-                    ],
-                  ),
-                  // The list of recent transactions.
-                  Expanded(
-                    child: _transactions.isEmpty
-                        ? const EmptyState() // Shows a message if there are no transactions.
-                        : TransactionList(
-                            transactions: _transactions,
-                            onTransactionTap: _navigateToEditTransaction,
-                            formatDate: _formatDate,
-                            onTransactionLongPress: (id) =>
-                                _showDeleteConfirmationDialog(id),
-                          ),
-                  ),
-                ],
-              ),
-            ),
-      // The bottom navigation bar.
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.home),
-              color: _selectedIndex == 0
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurface,
-              onPressed: () => _onItemTapped(0),
-              tooltip: l10n.home,
-            ),
-            IconButton(
-              icon: const Icon(Icons.bar_chart),
-              color: _selectedIndex == 1
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurface,
-              onPressed: () => _onItemTapped(1),
-              tooltip: l10n.stats,
-            ),
-            FloatingActionButton.small(
-              backgroundColor: Colors.grey[300],
-              onPressed: _navigateToAddTransaction,
-              tooltip: l10n.addNewTransaction,
-              elevation: 0,
-              highlightElevation: 0,
-              child: const Icon(Icons.add,color: Colors.black87,),
-            ),
-            IconButton(
-              icon: const Icon(Icons.smart_toy_outlined),
-              color: _selectedIndex == 2
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurface,
-              onPressed: () => _onItemTapped(2),
-              tooltip: 'Assistant',
-            ),
-            IconButton(
-              icon: const Icon(Icons.settings),
-              color: _selectedIndex == 3
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurface,
-              onPressed: () => _onItemTapped(3),
-              tooltip: 'Settings',
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

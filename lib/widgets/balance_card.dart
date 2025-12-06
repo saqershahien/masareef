@@ -35,12 +35,12 @@ class BalanceCard extends StatelessWidget {
                 _IncomeExpenseRow(
                     icon: Icons.arrow_upward,
                     label: l10n.income,
-                    amount: summary['income'] ?? 0,
+                    amount: currencyFormat.format(summary['income'] ?? 0),
                     color: Colors.green),
                 _IncomeExpenseRow(
                     icon: Icons.arrow_downward,
                     label: l10n.expenses,
-                    amount: summary['expenses'] ?? 0,
+                    amount: currencyFormat.format(summary['expenses'] ?? 0),
                     color: Colors.red),
               ],
             ),
@@ -61,13 +61,11 @@ class _IncomeExpenseRow extends StatelessWidget {
 
   final IconData icon;
   final String label;
-  final double amount;
+  final String amount;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
-    final currencyFormat = NumberFormat.currency(
-        locale: Localizations.localeOf(context).toString(), symbol: '');
     return Row(
       children: [
         Icon(icon, color: color, size: 20),
@@ -76,7 +74,7 @@ class _IncomeExpenseRow extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(label, style: Theme.of(context).textTheme.bodySmall),
-            Text(currencyFormat.format(amount),
+            Text(amount,
                 style: Theme.of(context)
                     .textTheme
                     .titleMedium

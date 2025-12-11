@@ -15,10 +15,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeBack => 'Welcome Back!';
 
   @override
-  String get goodMorning => 'Good Morning';
+  String get goodMorning => 'Good Morning ☀️';
 
   @override
-  String get goodEvening => 'Good Evening';
+  String get goodEvening => 'Good Evening 🌙';
 
   @override
   String get totalBalance => 'Total Balance';
@@ -241,4 +241,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get categoryCoffee => 'Coffee';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get showAppInformation => 'Show app information';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get createdBy => 'created by saqer and abd in damascus <3';
 }

@@ -1,8 +1,8 @@
 {
     "helloAdam": "Hello Adam",
     "welcomeBack": "Welcome Back!",
-    "goodMorning": "Good Morning",
-    "goodEvening": "Good Evening",
+    "goodMorning": "Good Morning ☀️",
+    "goodEvening": "Good Evening 🌙",
     "totalBalance": "Total Balance",
     "income": "Income",
     "expenses": "Expenses",
@@ -74,5 +74,9 @@
     "areYouSureYouWantToLoadDemoData": "Are you sure you want to load demo data?",
     "load": "Load",
     "demoDataLoadedSuccessfully": "Demo data loaded successfully",
-    "categoryCoffee": "Coffee"
+    "categoryCoffee": "Coffee",
+    "about": "About",
+    "showAppInformation": "Show app information",
+    "close": "Close",
+    "createdBy": "created by saqer and abd in damascus <3"
 }

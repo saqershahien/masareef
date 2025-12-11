@@ -13,6 +13,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool _demoDataLoaded = false;
+  bool _dataChanged = false;
 
   @override
   void initState() {
@@ -22,14 +23,16 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> _checkIfDemoDataLoaded() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _demoDataLoaded = prefs.getBool('demoDataLoaded') ?? false;
-    });
+    if (mounted) {
+      setState(() {
+        _demoDataLoaded = prefs.getBool('demoDataLoaded') ?? false;
+      });
+    }
   }
 
   Future<void> _confirmClearData(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
-    return showDialog<void>(
+    final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext dialogContext) {
@@ -47,7 +50,7 @@ class _SettingsPageState extends State<SettingsPage> {
             TextButton(
               child: Text(l10n.cancel),
               onPressed: () {
-                Navigator.of(dialogContext).pop();
+                Navigator.of(dialogContext).pop(false);
               },
             ),
             TextButton(
@@ -57,24 +60,28 @@ class _SettingsPageState extends State<SettingsPage> {
                 await DatabaseHelper().deleteAllTransactions();
                 final prefs = await SharedPreferences.getInstance();
                 await prefs.setBool('demoDataLoaded', false);
-                setState(() {
-                  _demoDataLoaded = false;
-                });
-                Navigator.of(dialogContext).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.allDataHasBeenCleared)),
-                );
+
+                _dataChanged = true;
+                Navigator.of(dialogContext).pop(true);
               },
             ),
           ],
         );
       },
     );
+    if (result == true && mounted) {
+      setState(() {
+        _demoDataLoaded = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.allDataHasBeenCleared)),
+      );
+    }
   }
 
   Future<void> _loadDemoData(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
-    return showDialog<void>(
+    final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext dialogContext) {
@@ -92,7 +99,7 @@ class _SettingsPageState extends State<SettingsPage> {
             TextButton(
               child: Text(l10n.cancel),
               onPressed: () {
-                Navigator.of(dialogContext).pop();
+                Navigator.of(dialogContext).pop(false);
               },
             ),
             TextButton(
@@ -101,19 +108,24 @@ class _SettingsPageState extends State<SettingsPage> {
                 await DatabaseHelper().insertDemoData();
                 final prefs = await SharedPreferences.getInstance();
                 await prefs.setBool('demoDataLoaded', true);
-                setState(() {
-                  _demoDataLoaded = true;
-                });
-                Navigator.of(dialogContext).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.demoDataLoadedSuccessfully)),
-                );
+
+                _dataChanged = true;
+                Navigator.of(dialogContext).pop(true);
               },
             ),
           ],
         );
       },
     );
+
+    if (result == true && mounted) {
+      setState(() {
+        _demoDataLoaded = true;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.demoDataLoadedSuccessfully)),
+      );
+    }
   }
 
   void _showLanguagePicker(BuildContext context) {
@@ -147,39 +159,73 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  void _showAboutDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(l10n.about),
+          content: Text(l10n.createdBy),
+          actions: <Widget>[
+            TextButton(
+              child: Text(l10n.close),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.settings),
-        backgroundColor: Colors.blueGrey[300],
-        elevation: 0,
-      ),
-      body: ListView(
-        children: <Widget>[
-          ListTile(
-            leading: const Icon(Icons.language, color: Colors.blueAccent),
-            title: Text(l10n.language),
-            subtitle: Text(l10n.changeTheAppLanguage),
-            onTap: () => _showLanguagePicker(context),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.delete_forever, color: Colors.redAccent),
-            title: Text(l10n.clearAllData),
-            subtitle: Text(l10n.permanentlyDeleteAllTransactions),
-            onTap: () => _confirmClearData(context),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.data_usage, color: Colors.greenAccent),
-            title: Text(l10n.loadDemoData),
-            subtitle: Text(l10n.loadTheAppWithSampleData),
-            onTap: _demoDataLoaded ? null : () => _loadDemoData(context),
-          ),
-          const Divider(),
-        ],
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, _dataChanged);
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(l10n.settings),
+          backgroundColor: Colors.blueGrey[300],
+          elevation: 0,
+        ),
+        body: ListView(
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.language, color: Colors.blueAccent),
+              title: Text(l10n.language),
+              subtitle: Text(l10n.changeTheAppLanguage),
+              onTap: () => _showLanguagePicker(context),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.delete_forever, color: Colors.redAccent),
+              title: Text(l10n.clearAllData),
+              subtitle: Text(l10n.permanentlyDeleteAllTransactions),
+              onTap: () => _confirmClearData(context),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.data_usage, color: Colors.greenAccent),
+              title: Text(l10n.loadDemoData),
+              subtitle: Text(l10n.loadTheAppWithSampleData),
+              onTap: _demoDataLoaded ? null : () => _loadDemoData(context),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.info_outline, color: Colors.blueGrey),
+              title: Text(l10n.about),
+              subtitle: Text(l10n.showAppInformation),
+              onTap: () => _showAboutDialog(context),
+            ),
+            const Divider(),
+          ],
+        ),
       ),
     );
   }

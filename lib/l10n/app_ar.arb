@@ -1,8 +1,8 @@
 {
     "helloAdam": "مرحباً آدم",
     "welcomeBack": "مرحباً بعودتك!",
-    "goodMorning": "صباح الخير",
-    "goodEvening": "مساء الخير",
+    "goodMorning": "صباح الخير ☀️",
+    "goodEvening": "مساء الخير 🌙",
     "totalBalance": "الرصيد الإجمالي",
     "income": "الدخل",
     "expenses": "المصاريف",
@@ -74,5 +74,9 @@
     "areYouSureYouWantToLoadDemoData": "هل أنت متأكد أنك تريد تحميل بيانات تجريبية؟",
     "load": "تحميل",
     "demoDataLoadedSuccessfully": "تم تحميل البيانات التجريبية بنجاح",
-    "categoryCoffee": "قهوة"
+    "categoryCoffee": "قهوة",
+    "about": "حول",
+    "showAppInformation": "إظهار معلومات التطبيق",
+    "close": "إغلاق",
+    "createdBy": "صنع بواسطة صقر وعبد في دمشق <3"
 }

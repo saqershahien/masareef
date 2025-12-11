@@ -15,10 +15,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get welcomeBack => 'مرحباً بعودتك!';
 
   @override
-  String get goodMorning => 'صباح الخير';
+  String get goodMorning => 'صباح الخير ☀️';
 
   @override
-  String get goodEvening => 'مساء الخير';
+  String get goodEvening => 'مساء الخير 🌙';
 
   @override
   String get totalBalance => 'الرصيد الإجمالي';
@@ -239,4 +239,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get categoryCoffee => 'قهوة';
+
+  @override
+  String get about => 'حول';
+
+  @override
+  String get showAppInformation => 'إظهار معلومات التطبيق';
+
+  @override
+  String get close => 'إغلاق';
+
+  @override
+  String get createdBy => 'صنع بواسطة صقر وعبد في دمشق <3';
 }

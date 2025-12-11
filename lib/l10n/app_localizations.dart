@@ -113,13 +113,13 @@ abstract class AppLocalizations {
   /// No description provided for @goodMorning.
   ///
   /// In en, this message translates to:
-  /// **'Good Morning'**
+  /// **'Good Morning ☀️'**
   String get goodMorning;
 
   /// No description provided for @goodEvening.
   ///
   /// In en, this message translates to:
-  /// **'Good Evening'**
+  /// **'Good Evening 🌙'**
   String get goodEvening;
 
   /// No description provided for @totalBalance.
@@ -553,6 +553,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Coffee'**
   String get categoryCoffee;
+
+  /// No description provided for @about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// No description provided for @showAppInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Show app information'**
+  String get showAppInformation;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @createdBy.
+  ///
+  /// In en, this message translates to:
+  /// **'created by saqer and abd in damascus <3'**
+  String get createdBy;
 }
 
 class _AppLocalizationsDelegate

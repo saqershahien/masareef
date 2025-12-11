@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
   // A boolean to indicate if the data is currently being loaded from the database.
   bool _isLoading = true;
   // The index of the currently selected item in the bottom navigation bar.
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0; // Always 0 for HomePage
 
   @override
   void initState() {
@@ -74,48 +74,52 @@ class _HomePageState extends State<HomePage> {
   /// the [DatabaseHelper], calculates the monthly financial summary, and then
   /// updates the state with the new data.
   Future<void> _refreshTransactions() async {
+    if (!mounted) return;
     setState(() {
       _isLoading = true;
     });
     final data = await DatabaseHelper().getTransactions();
     final summary = getMonthlyFinancialSummary(data);
-    setState(() {
-      _transactions = data;
-      _monthlySummary = summary;
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _transactions = data;
+        _monthlySummary = summary;
+        _isLoading = false;
+      });
+    }
   }
 
   /// Handles tap events on the bottom navigation bar.
   ///
-  /// This method updates the selected index and navigates to the corresponding
-  /// screen. The home screen is re-rendered, while the stats and settings
-  /// screens are pushed onto the navigation stack.
-  void _onItemTapped(int index) {
-    if (index == _selectedIndex) return;
-
-    setState(() {
-      _selectedIndex = index;
-    });
+  /// This method navigates to the corresponding screen. The "Home" item (index 0)
+  /// does nothing as it's the current screen. Other items push a new page
+  /// on top of the home page.
+  void _onItemTapped(int index) async {
+    // Index 0 is the home page, which is already visible.
+    // Index 2 is the FAB, handled by onFabPressed.
+    if (index == 0 || index == 2) return;
 
     switch (index) {
       case 1: // Stats
-        Navigator.push(
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => StatsPage(
               transactions: _transactions,
             ),
           ),
-        ).then((_) => _refreshTransactions());
+        );
         break;
       case 3: // Settings
-        Navigator.push(
+        final result = await Navigator.push<bool?>(
           context,
           MaterialPageRoute(
             builder: (context) => const SettingsPage(),
           ),
-        ).then((_) => _refreshTransactions());
+        );
+        if (result == true) {
+          _refreshTransactions();
+        }
         break;
     }
   }
@@ -177,10 +181,10 @@ class _HomePageState extends State<HomePage> {
               ),
               onPressed: () async {
                 await DatabaseHelper().deleteTransaction(id);
-                if (mounted) {
-                  Navigator.of(bcontext).pop();
-                  _refreshTransactions();
-                }
+                // The dialog is popped, so we don't need a mounted check for bcontext.
+                Navigator.of(bcontext).pop(); 
+                // _refreshTransactions will check for mounted state of the HomePage.
+                _refreshTransactions();
               },
             ),
           ],
@@ -215,13 +219,16 @@ class _HomePageState extends State<HomePage> {
                               fontSize: 20, fontWeight: FontWeight.bold)),
                       // A button to navigate to the page with all transactions.
                       TextButton(
-                        onPressed: () {
-                          Navigator.push(
+                        onPressed: () async {
+                          final result = await Navigator.push<bool?>(
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
                                     const AllTransactionsPage()),
-                          ).then((value) => _refreshTransactions());
+                          );
+                          if (result == true) {
+                            _refreshTransactions();
+                          }
                         },
                         child: Text(l10n.viewAll),
                       ),

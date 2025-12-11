@@ -66,9 +66,11 @@ class MyAppState extends State<MyApp> {
   Future<void> _loadLocale() async {
     final prefs = await SharedPreferences.getInstance();
     final languageCode = prefs.getString('languageCode') ?? 'en';
-    setState(() {
-      _locale = Locale(languageCode, '');
-    });
+    if (mounted) {
+      setState(() {
+        _locale = Locale(languageCode, '');
+      });
+    }
   }
 
   /// Changes the application's language and saves the preference to [SharedPreferences].
@@ -79,9 +81,11 @@ class MyAppState extends State<MyApp> {
   Future<void> changeLanguage(Locale locale) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('languageCode', locale.languageCode);
-    setState(() {
-      _locale = locale;
-    });
+    if (mounted) {
+      setState(() {
+        _locale = locale;
+      });
+    }
   }
 
   @override

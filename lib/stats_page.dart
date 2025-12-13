@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:grade_project/l10n/app_localizations.dart';
-import 'package:grade_project/masareef_transaction.dart';
-import 'package:grade_project/widgets/category_list.dart';
-import 'package:grade_project/widgets/period_selector.dart';
-import 'package:grade_project/widgets/pie_chart_card.dart';
-import 'package:grade_project/widgets/summary_card.dart';
+import 'package:masareef/l10n/app_localizations.dart';
+import 'package:masareef/masareef_transaction.dart';
+import 'package:masareef/widgets/category_list.dart';
+import 'package:masareef/widgets/period_selector.dart';
+import 'package:masareef/widgets/pie_chart_card.dart';
+import 'package:masareef/widgets/summary_card.dart';
 
 /// A page that displays financial statistics, including income, expenses, and spending breakdown by category.
 ///
@@ -63,17 +63,18 @@ class _StatsPageState extends State<StatsPage> {
   /// Only considers 'expense' type transactions.
   /// Returns a map where keys are category names and values are the total amounts spent.
   Map<String, double> _getSpendingByCategory(
-      List<MasareefTransaction> transactions) {
+    List<MasareefTransaction> transactions,
+  ) {
     return transactions
         .where((tx) => tx.type == 'expense')
         .fold<Map<String, double>>({}, (map, tx) {
-      map.update(
-        tx.category,
-        (value) => value + tx.amount,
-        ifAbsent: () => tx.amount,
-      );
-      return map;
-    });
+          map.update(
+            tx.category,
+            (value) => value + tx.amount,
+            ifAbsent: () => tx.amount,
+          );
+          return map;
+        });
   }
 
   @override
@@ -88,13 +89,17 @@ class _StatsPageState extends State<StatsPage> {
         .where((tx) => tx.type == 'income')
         .fold(0.0, (sum, item) => sum + item.amount);
     // Calculate the total expenses from the spending data.
-    final totalExpenses =
-        spendingData.values.fold(0.0, (sum, item) => sum + item);
+    final totalExpenses = spendingData.values.fold(
+      0.0,
+      (sum, item) => sum + item,
+    );
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.statistics,
-            style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          l10n.statistics,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
         elevation: 0,
       ),
@@ -116,23 +121,31 @@ class _StatsPageState extends State<StatsPage> {
                     },
                   ),
                   const SizedBox(height: 24),
+
                   /// Displays summary cards for total income and total expenses.
                   _SummaryCards(
-                      totalIncome: totalIncome, totalExpenses: totalExpenses),
+                    totalIncome: totalIncome,
+                    totalExpenses: totalExpenses,
+                  ),
                   const SizedBox(height: 24),
+
                   /// Displays the spending breakdown pie chart and title, only if there is spending data.
                   if (spendingData.isNotEmpty)
                     _SpendingBreakdown(
-                        spendingData: spendingData,
-                        totalExpenses: totalExpenses),
+                      spendingData: spendingData,
+                      totalExpenses: totalExpenses,
+                    ),
                 ],
               ),
             ),
           ),
+
           /// Displays a list of categories with their spending amounts, only if there is spending data.
           if (spendingData.isNotEmpty)
             CategoryList(
-                spendingData: spendingData, totalExpenses: totalExpenses),
+              spendingData: spendingData,
+              totalExpenses: totalExpenses,
+            ),
         ],
       ),
     );
@@ -141,10 +154,7 @@ class _StatsPageState extends State<StatsPage> {
 
 /// A StatelessWidget that displays summary cards for total income and expenses.
 class _SummaryCards extends StatelessWidget {
-  const _SummaryCards({
-    required this.totalIncome,
-    required this.totalExpenses,
-  });
+  const _SummaryCards({required this.totalIncome, required this.totalExpenses});
 
   /// The total income to display.
   final double totalIncome;
@@ -159,18 +169,20 @@ class _SummaryCards extends StatelessWidget {
       children: [
         Expanded(
           child: SummaryCard(
-              title: l10n.income,
-              amount: totalIncome,
-              color: Colors.green,
-              icon: Icons.arrow_upward),
+            title: l10n.income,
+            amount: totalIncome,
+            color: Colors.green,
+            icon: Icons.arrow_upward,
+          ),
         ),
         const SizedBox(width: 16),
         Expanded(
           child: SummaryCard(
-              title: l10n.expenses,
-              amount: totalExpenses,
-              color: Colors.red,
-              icon: Icons.arrow_downward),
+            title: l10n.expenses,
+            amount: totalExpenses,
+            color: Colors.red,
+            icon: Icons.arrow_downward,
+          ),
         ),
       ],
     );
@@ -196,9 +208,12 @@ class _SpendingBreakdown extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(l10n.spendingBreakdown,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+        Text(
+          l10n.spendingBreakdown,
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 16),
+
         /// The pie chart widget displaying the spending distribution.
         PieChartCard(spendingData: spendingData, totalExpenses: totalExpenses),
         const SizedBox(height: 24),

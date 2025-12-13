@@ -1,31 +1,36 @@
-import 'package:grade_project/finance_utils.dart';
-import 'package:grade_project/masareef_transaction.dart';
+import 'package:masareef/finance_utils.dart';
+import 'package:masareef/masareef_transaction.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 void main() {
   group('getFinancialSummary', () {
     test('returns correct summary for a list of transactions', () {
       // Arrange
       final transactions = [
         MasareefTransaction(
-            amount: 100.0,
-            date: DateTime.now(),
-            category: 'Salary',
-            type: 'income'),
+          amount: 100.0,
+          date: DateTime.now(),
+          category: 'Salary',
+          type: 'income',
+        ),
         MasareefTransaction(
-            amount: 25.0,
-            date: DateTime.now(),
-            category: 'Groceries',
-            type: 'expense'),
+          amount: 25.0,
+          date: DateTime.now(),
+          category: 'Groceries',
+          type: 'expense',
+        ),
         MasareefTransaction(
-            amount: 50.0,
-            date: DateTime.now(),
-            category: 'Freelance',
-            type: 'income'),
+          amount: 50.0,
+          date: DateTime.now(),
+          category: 'Freelance',
+          type: 'income',
+        ),
         MasareefTransaction(
-            amount: 10.0,
-            date: DateTime.now(),
-            category: 'Transport',
-            type: 'expense'),
+          amount: 10.0,
+          date: DateTime.now(),
+          category: 'Transport',
+          type: 'expense',
+        ),
       ];
 
       // Act

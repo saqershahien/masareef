@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:grade_project/l10n/app_localizations.dart';
-import 'package:grade_project/masareef_transaction.dart';
-import 'package:grade_project/category_icons.dart';
-import 'package:grade_project/category_translations.dart';
+//import 'package:masareef/l10n/app_localizations.dart';
+import 'package:masareef/masareef_transaction.dart';
+import 'package:masareef/category_icons.dart';
+import 'package:masareef/category_translations.dart';
 
 class TransactionList extends StatelessWidget {
   final List<MasareefTransaction> transactions;
@@ -45,14 +45,17 @@ class TransactionList extends StatelessWidget {
         });
 
         final currencyFormat = NumberFormat.currency(
-            locale: Localizations.localeOf(context).toString(), symbol: '');
+          locale: Localizations.localeOf(context).toString(),
+          symbol: '',
+        );
 
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 8.0),
           color: const Color(0xFFE6E0FF),
           elevation: 0,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -60,26 +63,31 @@ class TransactionList extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(
-                      top: 8.0, bottom: 16.0, left: 8.0, right: 8.0),
+                    top: 8.0,
+                    bottom: 16.0,
+                    left: 8.0,
+                    right: 8.0,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(formatDate(context, date),
-                          style: Theme.of(context).textTheme.titleSmall),
+                      Text(
+                        formatDate(context, date),
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
                       Text(
                         currencyFormat.format(dailyTotal),
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: dailyTotal >= 0
-                                  ? Colors.green
-                                  : Colors.red,
-                            ),
+                          fontWeight: FontWeight.bold,
+                          color: dailyTotal >= 0 ? Colors.green : Colors.red,
+                        ),
                       ),
                     ],
                   ),
                 ),
-                ...dailyTransactions.map((tx) =>
-                    _buildTransactionTile(context, tx, currencyFormat)),
+                ...dailyTransactions.map(
+                  (tx) => _buildTransactionTile(context, tx, currencyFormat),
+                ),
               ],
             ),
           ),
@@ -88,8 +96,11 @@ class TransactionList extends StatelessWidget {
     );
   }
 
-  Widget _buildTransactionTile(BuildContext context, MasareefTransaction tx,
-      NumberFormat currencyFormat) {
+  Widget _buildTransactionTile(
+    BuildContext context,
+    MasareefTransaction tx,
+    NumberFormat currencyFormat,
+  ) {
     final categoryInfo = categoryIcons[tx.category] ?? defaultCategoryInfo;
     final isIncome = tx.type == 'income';
     final amountText = isIncome
@@ -104,16 +115,17 @@ class TransactionList extends StatelessWidget {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: categoryInfo.color.withAlpha(51),
-          child: Icon(
-            categoryInfo.icon,
-            color: categoryInfo.color,
-          ),
+          child: Icon(categoryInfo.icon, color: categoryInfo.color),
         ),
-        title: Text(getCategoryDisplayName(tx.category, context),
-            style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          getCategoryDisplayName(tx.category, context),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         subtitle: tx.notes != null ? Text(tx.notes!) : null,
-        trailing: Text(amountText,
-            style: TextStyle(color: amountColor, fontWeight: FontWeight.bold)),
+        trailing: Text(
+          amountText,
+          style: TextStyle(color: amountColor, fontWeight: FontWeight.bold),
+        ),
         onTap: () => onTransactionTap(tx),
         onLongPress: () => onTransactionLongPress(tx.id!),
       ),

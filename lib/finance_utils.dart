@@ -1,7 +1,8 @@
-import 'package:grade_project/masareef_transaction.dart';
+import 'package:masareef/masareef_transaction.dart';
 
 Map<String, double> getFinancialSummary(
-    List<MasareefTransaction> transactions) {
+  List<MasareefTransaction> transactions,
+) {
   double income = 0.0;
   double expenses = 0.0;
   for (var tx in transactions) {
@@ -11,15 +12,12 @@ Map<String, double> getFinancialSummary(
       expenses += tx.amount;
     }
   }
-  return {
-    'income': income,
-    'expenses': expenses,
-    'balance': income - expenses,
-  };
+  return {'income': income, 'expenses': expenses, 'balance': income - expenses};
 }
 
 Map<String, double> getMonthlyFinancialSummary(
-    List<MasareefTransaction> transactions) {
+  List<MasareefTransaction> transactions,
+) {
   double currentMonthIncome = 0.0;
   double currentMonthExpenses = 0.0;
   double previousBalance = 0.0;
@@ -38,7 +36,8 @@ Map<String, double> getMonthlyFinancialSummary(
       } else {
         currentMonthExpenses += tx.amount;
       }
-    } else if (txDate.year < currentYear || (txDate.year == currentYear && txDate.month < currentMonth)) {
+    } else if (txDate.year < currentYear ||
+        (txDate.year == currentYear && txDate.month < currentMonth)) {
       // Transaction is from a previous month, so it contributes to the opening balance
       if (tx.type == 'income') {
         previousBalance += tx.amount;

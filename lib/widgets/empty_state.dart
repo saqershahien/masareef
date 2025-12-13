@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grade_project/l10n/app_localizations.dart';
+import 'package:masareef/l10n/app_localizations.dart';
 
 class EmptyState extends StatelessWidget {
   const EmptyState({super.key});
@@ -13,10 +13,14 @@ class EmptyState extends StatelessWidget {
         children: [
           const Icon(Icons.receipt_long, size: 80, color: Colors.grey),
           const SizedBox(height: 20),
-          Text(l10n.noTransactionsYet,
-              style: Theme.of(context).textTheme.headlineSmall),
-          Text(l10n.addNewTransactionToGetStarted,
-              style: Theme.of(context).textTheme.bodyLarge),
+          Text(
+            l10n.noTransactionsYet,
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+          Text(
+            l10n.addNewTransactionToGetStarted,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
         ],
       ),
     );

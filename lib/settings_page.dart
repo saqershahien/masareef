@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:grade_project/database_helper.dart';
-import 'package:grade_project/main.dart';
-import 'package:grade_project/l10n/app_localizations.dart';
+import 'package:masareef/database_helper.dart';
+import 'package:masareef/main.dart';
+import 'package:masareef/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -73,9 +73,9 @@ class _SettingsPageState extends State<SettingsPage> {
       setState(() {
         _demoDataLoaded = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.allDataHasBeenCleared)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.allDataHasBeenCleared)));
     }
   }
 
@@ -122,9 +122,9 @@ class _SettingsPageState extends State<SettingsPage> {
       setState(() {
         _demoDataLoaded = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.demoDataLoadedSuccessfully)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.demoDataLoadedSuccessfully)));
     }
   }
 
@@ -204,7 +204,10 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             const Divider(),
             ListTile(
-              leading: const Icon(Icons.delete_forever, color: Colors.redAccent),
+              leading: const Icon(
+                Icons.delete_forever,
+                color: Colors.redAccent,
+              ),
               title: Text(l10n.clearAllData),
               subtitle: Text(l10n.permanentlyDeleteAllTransactions),
               onTap: () => _confirmClearData(context),

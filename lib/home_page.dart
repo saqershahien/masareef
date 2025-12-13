@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:grade_project/all_transactions_page.dart';
-import 'package:grade_project/database_helper.dart';
-import 'package:grade_project/finance_utils.dart';
-import 'package:grade_project/settings_page.dart';
-import 'package:grade_project/stats_page.dart';
-import 'package:grade_project/masareef_transaction.dart';
-import 'package:grade_project/transaction_detail_page.dart';
-import 'package:grade_project/widgets/app_bottom_navigation_bar.dart';
-import 'package:grade_project/widgets/home_app_bar.dart';
-import 'package:grade_project/widgets/month_balance_card.dart';
-import 'package:grade_project/widgets/empty_state.dart';
-import 'package:grade_project/widgets/transaction_list.dart';
+import 'package:masareef/all_transactions_page.dart';
+import 'package:masareef/database_helper.dart';
+import 'package:masareef/finance_utils.dart';
+import 'package:masareef/settings_page.dart';
+import 'package:masareef/stats_page.dart';
+import 'package:masareef/masareef_transaction.dart';
+import 'package:masareef/transaction_detail_page.dart';
+import 'package:masareef/widgets/app_bottom_navigation_bar.dart';
+import 'package:masareef/widgets/home_app_bar.dart';
+import 'package:masareef/widgets/month_balance_card.dart';
+import 'package:masareef/widgets/empty_state.dart';
+import 'package:masareef/widgets/transaction_list.dart';
 import 'package:intl/intl.dart';
 import 'l10n/app_localizations.dart';
 
@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
   Map<String, double> _monthlySummary = {
     'income': 0,
     'expenses': 0,
-    'balance': 0
+    'balance': 0,
   };
   // A boolean to indicate if the data is currently being loaded from the database.
   bool _isLoading = true;
@@ -104,18 +104,14 @@ class _HomePageState extends State<HomePage> {
         await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => StatsPage(
-              transactions: _transactions,
-            ),
+            builder: (context) => StatsPage(transactions: _transactions),
           ),
         );
         break;
       case 3: // Settings
         final result = await Navigator.push<bool?>(
           context,
-          MaterialPageRoute(
-            builder: (context) => const SettingsPage(),
-          ),
+          MaterialPageRoute(builder: (context) => const SettingsPage()),
         );
         if (result == true) {
           _refreshTransactions();
@@ -130,9 +126,9 @@ class _HomePageState extends State<HomePage> {
   /// If a new transaction is added, the list of transactions is refreshed.
   void _navigateToAddTransaction() async {
     final result = await Navigator.push<bool?>(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const TransactionDetailPage()));
+      context,
+      MaterialPageRoute(builder: (context) => const TransactionDetailPage()),
+    );
     if (result == true) {
       _refreshTransactions();
     }
@@ -145,10 +141,11 @@ class _HomePageState extends State<HomePage> {
   /// transactions is refreshed.
   void _navigateToEditTransaction(MasareefTransaction transaction) async {
     final result = await Navigator.push<bool?>(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                TransactionDetailPage(transaction: transaction)));
+      context,
+      MaterialPageRoute(
+        builder: (context) => TransactionDetailPage(transaction: transaction),
+      ),
+    );
     if (result == true) {
       _refreshTransactions();
     }
@@ -182,7 +179,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () async {
                 await DatabaseHelper().deleteTransaction(id);
                 // The dialog is popped, so we don't need a mounted check for bcontext.
-                Navigator.of(bcontext).pop(); 
+                Navigator.of(bcontext).pop();
                 // _refreshTransactions will check for mounted state of the HomePage.
                 _refreshTransactions();
               },
@@ -200,8 +197,8 @@ class _HomePageState extends State<HomePage> {
       appBar: const HomeAppBar(),
       body: _isLoading
           ? const Center(
-              child:
-                  CircularProgressIndicator()) // Shows a loader while data is being fetched.
+              child: CircularProgressIndicator(),
+            ) // Shows a loader while data is being fetched.
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -214,17 +211,21 @@ class _HomePageState extends State<HomePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(l10n.recentTransactions,
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
+                      Text(
+                        l10n.recentTransactions,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       // A button to navigate to the page with all transactions.
                       TextButton(
                         onPressed: () async {
                           final result = await Navigator.push<bool?>(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const AllTransactionsPage()),
+                              builder: (context) => const AllTransactionsPage(),
+                            ),
                           );
                           if (result == true) {
                             _refreshTransactions();

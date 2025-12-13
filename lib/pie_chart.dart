@@ -1,6 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:grade_project/category_icons.dart';
+import 'package:masareef/category_icons.dart';
 
 class SpendingPieChart extends StatefulWidget {
   final Map<String, double> spendingData;
@@ -61,12 +61,11 @@ class SpendingPieChartState extends State<SpendingPieChart> {
               });
             },
           ),
-          borderData: FlBorderData(
-            show: false,
-          ),
+          borderData: FlBorderData(show: false),
           sectionsSpace: 0,
-          centerSpaceRadius:
-          widget.isResponsive ? 40 : 60, // Adjust radius based on context
+          centerSpaceRadius: widget.isResponsive
+              ? 40
+              : 60, // Adjust radius based on context
           sections: showingSections(),
         ),
       ),

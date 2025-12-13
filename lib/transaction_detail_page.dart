@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:grade_project/categories.dart';
-import 'package:grade_project/category_icons.dart';
-import 'package:grade_project/category_translations.dart';
-import 'package:grade_project/database_helper.dart';
-import 'package:grade_project/l10n/app_localizations.dart';
-import 'package:grade_project/masareef_transaction.dart';
+import 'package:masareef/categories.dart';
+import 'package:masareef/category_icons.dart';
+import 'package:masareef/category_translations.dart';
+import 'package:masareef/database_helper.dart';
+import 'package:masareef/l10n/app_localizations.dart';
+import 'package:masareef/masareef_transaction.dart';
 import 'package:intl/intl.dart';
 
 class TransactionDetailPage extends StatefulWidget {
@@ -47,10 +47,13 @@ class _TransactionDetailPageState extends State<TransactionDetailPage> {
   }
 
   void _updateCategoriesAndSelection({bool initialLoad = false}) {
-    List<String> currentCategories =
-        _transactionType == 'income' ? incomeCategories : spendingCategories;
+    List<String> currentCategories = _transactionType == 'income'
+        ? incomeCategories
+        : spendingCategories;
 
-    if (initialLoad && _isEditing && currentCategories.contains(widget.transaction!.category)) {
+    if (initialLoad &&
+        _isEditing &&
+        currentCategories.contains(widget.transaction!.category)) {
       _selectedCategory = widget.transaction!.category;
     } else {
       _selectedCategory = currentCategories.first;
@@ -92,7 +95,10 @@ class _TransactionDetailPageState extends State<TransactionDetailPage> {
     );
 
     if (_isEditing) {
-      await DatabaseHelper().updateTransaction(newTransaction, newTransaction.id!);
+      await DatabaseHelper().updateTransaction(
+        newTransaction,
+        newTransaction.id!,
+      );
     } else {
       await DatabaseHelper().insertTransaction(newTransaction);
     }
@@ -123,10 +129,14 @@ class _TransactionDetailPageState extends State<TransactionDetailPage> {
               ),
               onPressed: () async {
                 if (_isEditing && widget.transaction!.id != null) {
-                  await DatabaseHelper().deleteTransaction(widget.transaction!.id!);
+                  await DatabaseHelper().deleteTransaction(
+                    widget.transaction!.id!,
+                  );
                   if (mounted) {
                     Navigator.of(bcontext).pop(); // Close confirmation dialog
-                    Navigator.of(context).pop(true); // Indicate success and pop detail page
+                    Navigator.of(
+                      context,
+                    ).pop(true); // Indicate success and pop detail page
                   }
                 }
               },
@@ -140,8 +150,9 @@ class _TransactionDetailPageState extends State<TransactionDetailPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    List<String> currentCategories =
-        _transactionType == 'income' ? incomeCategories : spendingCategories;
+    List<String> currentCategories = _transactionType == 'income'
+        ? incomeCategories
+        : spendingCategories;
 
     return Scaffold(
       appBar: AppBar(
@@ -155,13 +166,15 @@ class _TransactionDetailPageState extends State<TransactionDetailPage> {
             SegmentedButton<String>(
               segments: <ButtonSegment<String>>[
                 ButtonSegment<String>(
-                    value: 'expense',
-                    label: Text(l10n.expense),
-                    icon: const Icon(Icons.arrow_downward)),
+                  value: 'expense',
+                  label: Text(l10n.expense),
+                  icon: const Icon(Icons.arrow_downward),
+                ),
                 ButtonSegment<String>(
-                    value: 'income',
-                    label: Text(l10n.income),
-                    icon: const Icon(Icons.arrow_upward)),
+                  value: 'income',
+                  label: Text(l10n.income),
+                  icon: const Icon(Icons.arrow_upward),
+                ),
               ],
               selected: {_transactionType},
               onSelectionChanged: (Set<String> newSelection) {
@@ -198,7 +211,8 @@ class _TransactionDetailPageState extends State<TransactionDetailPage> {
                 prefixIcon: const Icon(Icons.category_outlined),
               ),
               items: currentCategories.map((category) {
-                final categoryInfo = categoryIcons[category] ?? defaultCategoryInfo;
+                final categoryInfo =
+                    categoryIcons[category] ?? defaultCategoryInfo;
                 return DropdownMenuItem(
                   value: category,
                   child: Row(
@@ -230,7 +244,10 @@ class _TransactionDetailPageState extends State<TransactionDetailPage> {
             GestureDetector(
               onTap: () => _selectDate(context),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 15,
+                ),
                 decoration: BoxDecoration(
                   color: Theme.of(context).inputDecorationTheme.fillColor,
                   borderRadius: BorderRadius.circular(12),
@@ -240,8 +257,10 @@ class _TransactionDetailPageState extends State<TransactionDetailPage> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.calendar_today_outlined,
-                            color: Theme.of(context).hintColor),
+                        Icon(
+                          Icons.calendar_today_outlined,
+                          color: Theme.of(context).hintColor,
+                        ),
                         const SizedBox(width: 12),
                         Text(
                           DateFormat.yMMMd().format(_selectedDate),
@@ -249,8 +268,10 @@ class _TransactionDetailPageState extends State<TransactionDetailPage> {
                         ),
                       ],
                     ),
-                    Icon(Icons.arrow_drop_down,
-                        color: Theme.of(context).hintColor),
+                    Icon(
+                      Icons.arrow_drop_down,
+                      color: Theme.of(context).hintColor,
+                    ),
                   ],
                 ),
               ),
@@ -262,8 +283,12 @@ class _TransactionDetailPageState extends State<TransactionDetailPage> {
                 if (_isEditing)
                   TextButton(
                     onPressed: _deleteTransaction,
-                    child: Text(l10n.delete,
-                        style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                    child: Text(
+                      l10n.delete,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
                   ),
                 const Spacer(),
                 TextButton(

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:grade_project/category_icons.dart';
-import 'package:grade_project/category_translations.dart';
-import 'package:grade_project/database_helper.dart';
-import 'package:grade_project/masareef_transaction.dart';
-import 'package:grade_project/transaction_detail_page.dart'; // Import the new page
+import 'package:masareef/category_icons.dart';
+import 'package:masareef/category_translations.dart';
+import 'package:masareef/database_helper.dart';
+import 'package:masareef/masareef_transaction.dart';
+import 'package:masareef/transaction_detail_page.dart'; // Import the new page
 import 'package:intl/intl.dart';
 import 'l10n/app_localizations.dart';
 
@@ -51,13 +51,17 @@ class _AllTransactionsPageState extends State<AllTransactionsPage> {
     final query = _searchController.text.toLowerCase();
     setState(() {
       _filteredTransactions = _allTransactions.where((tx) {
-        final categoryMatch = getCategoryDisplayName(tx.category, context)
-            .toLowerCase()
-            .contains(query);
+        final categoryMatch = getCategoryDisplayName(
+          tx.category,
+          context,
+        ).toLowerCase().contains(query);
         final notesMatch = tx.notes?.toLowerCase().contains(query) ?? false;
         final amountMatch = tx.amount.toString().contains(query);
-        final dateMatch = (_startDate == null ||
-                tx.date.isAfter(_startDate!.subtract(const Duration(days: 1)))) &&
+        final dateMatch =
+            (_startDate == null ||
+                tx.date.isAfter(
+                  _startDate!.subtract(const Duration(days: 1)),
+                )) &&
             (_endDate == null ||
                 tx.date.isBefore(_endDate!.add(const Duration(days: 1))));
 
@@ -101,8 +105,15 @@ class _AllTransactionsPageState extends State<AllTransactionsPage> {
     _refreshTransactions();
   }
 
-  Future<void> _navigateToTransactionDetail(MasareefTransaction? transaction) async {
-    final result = await Navigator.push<bool?>(context, MaterialPageRoute(builder: (context) => TransactionDetailPage(transaction: transaction)));
+  Future<void> _navigateToTransactionDetail(
+    MasareefTransaction? transaction,
+  ) async {
+    final result = await Navigator.push<bool?>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TransactionDetailPage(transaction: transaction),
+      ),
+    );
     if (result == true) {
       _refreshTransactions();
     }
@@ -134,7 +145,8 @@ class _AllTransactionsPageState extends State<AllTransactionsPage> {
                     filteredTransactions: _filteredTransactions,
                     onDelete: _deleteTransaction,
                     onRefresh: _refreshTransactions,
-                    onTransactionTap: _navigateToTransactionDetail, // Pass the new navigation function
+                    onTransactionTap:
+                        _navigateToTransactionDetail, // Pass the new navigation function
                   ),
           ),
         ],
@@ -180,10 +192,7 @@ class _SearchBar extends StatelessWidget {
             onPressed: onFilterPressed,
           ),
           if (isFilterActive)
-            IconButton(
-              icon: const Icon(Icons.clear),
-              onPressed: onClearFilter,
-            )
+            IconButton(icon: const Icon(Icons.clear), onPressed: onClearFilter),
         ],
       ),
     );
@@ -253,7 +262,8 @@ class _TransactionList extends StatelessWidget {
   }
 
   Map<DateTime, List<MasareefTransaction>> _groupTransactionsByDate(
-      List<MasareefTransaction> transactions) {
+    List<MasareefTransaction> transactions,
+  ) {
     final Map<DateTime, List<MasareefTransaction>> groupedTransactions = {};
     for (var tx in transactions) {
       final dateKey = _truncateToDay(tx.date);
@@ -285,7 +295,9 @@ class _TransactionList extends StatelessWidget {
           return sum + (item.type == 'income' ? item.amount : -item.amount);
         });
         final currencyFormat = NumberFormat.currency(
-            locale: Localizations.localeOf(context).toString(), symbol: '');
+          locale: Localizations.localeOf(context).toString(),
+          symbol: '',
+        );
 
         return [
           SliverToBoxAdapter(
@@ -294,7 +306,8 @@ class _TransactionList extends StatelessWidget {
               color: const Color(0xFFE6E0FF),
               elevation: 0,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
@@ -303,19 +316,18 @@ class _TransactionList extends StatelessWidget {
                     Text(
                       formattedDate.toUpperCase(),
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withOpacity(0.6),
-                          ),
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.6),
+                      ),
                     ),
                     Text(
                       currencyFormat.format(dailyTotal),
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: dailyTotal >= 0 ? Colors.green : Colors.red,
-                          ),
+                        fontWeight: FontWeight.bold,
+                        color: dailyTotal >= 0 ? Colors.green : Colors.red,
+                      ),
                     ),
                   ],
                 ),
@@ -323,13 +335,9 @@ class _TransactionList extends StatelessWidget {
             ),
           ),
           SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return _buildTransactionTile(
-                    context, transactionsForDate[index]);
-              },
-              childCount: transactionsForDate.length,
-            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              return _buildTransactionTile(context, transactionsForDate[index]);
+            }, childCount: transactionsForDate.length),
           ),
         ];
       }).toList(),
@@ -340,7 +348,9 @@ class _TransactionList extends StatelessWidget {
     final categoryInfo = categoryIcons[tx.category] ?? defaultCategoryInfo;
     final isIncome = tx.type == 'income';
     final currencyFormat = NumberFormat.currency(
-        locale: Localizations.localeOf(context).toString(), symbol: '');
+      locale: Localizations.localeOf(context).toString(),
+      symbol: '',
+    );
     final amountText =
         '${isIncome ? '+' : '-'}${currencyFormat.format(tx.amount)}';
     final amountColor = isIncome ? Colors.green : Colors.red;
@@ -352,16 +362,16 @@ class _TransactionList extends StatelessWidget {
         backgroundColor: categoryInfo.color.withOpacity(0.1),
         child: Icon(categoryInfo.icon, color: categoryInfo.color, size: 20),
       ),
-      title: Text(getCategoryDisplayName(tx.category, context),
-          style: const TextStyle(fontWeight: FontWeight.w500)),
-      subtitle:
-          tx.notes != null && tx.notes!.isNotEmpty ? Text(tx.notes!) : null,
+      title: Text(
+        getCategoryDisplayName(tx.category, context),
+        style: const TextStyle(fontWeight: FontWeight.w500),
+      ),
+      subtitle: tx.notes != null && tx.notes!.isNotEmpty
+          ? Text(tx.notes!)
+          : null,
       trailing: Text(
         amountText,
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-          color: amountColor,
-        ),
+        style: TextStyle(fontWeight: FontWeight.w600, color: amountColor),
       ),
     );
   }

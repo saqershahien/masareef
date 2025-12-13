@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'package:grade_project/demo_data.dart' as demo;
+import 'package:masareef/demo_data.dart' as demo;
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:grade_project/masareef_transaction.dart';
+import 'package:masareef/masareef_transaction.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();

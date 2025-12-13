@@ -1,4 +1,4 @@
-import 'package:grade_project/masareef_transaction.dart';
+import 'package:masareef/masareef_transaction.dart';
 import 'package:sqflite/sqflite.dart';
 
 Future<void> insertDemoData(Database db) async {

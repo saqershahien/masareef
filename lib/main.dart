@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:grade_project/home_page.dart';
-import 'package:grade_project/theme.dart';
+import 'package:masareef/home_page.dart';
+import 'package:masareef/theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'l10n/app_localizations.dart';

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:masareef/all_transactions_page.dart';
 import 'package:masareef/database_helper.dart';
 import 'package:masareef/finance_utils.dart';
+import 'package:masareef/prediction_page.dart';
 import 'package:masareef/settings_page.dart';
 import 'package:masareef/stats_page.dart';
 import 'package:masareef/masareef_transaction.dart';
@@ -96,8 +97,8 @@ class _HomePageState extends State<HomePage> {
   /// on top of the home page.
   void _onItemTapped(int index) async {
     // Index 0 is the home page, which is already visible.
-    // Index 2 is the FAB, handled by onFabPressed.
-    if (index == 0 || index == 2) return;
+    // Index 2 is handled for the PredictionPage.
+    if (index == 0) return;
 
     switch (index) {
       case 1: // Stats
@@ -105,6 +106,14 @@ class _HomePageState extends State<HomePage> {
           context,
           MaterialPageRoute(
             builder: (context) => StatsPage(transactions: _transactions),
+          ),
+        );
+        break;
+      case 2: // Prediction
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PredictionPage(),
           ),
         );
         break;
